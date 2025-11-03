@@ -1,0 +1,36 @@
+/* Painel Geral */
+.dashboard-panel {
+  fill: #ffffff;
+  stroke: #e0e0e0;
+  stroke-width: 1px;
+}
+
+/* Avatar */
+.avatar-circle {
+  fill: #e0e0e0;
+  stroke: #000000;
+  stroke-width: 2px;
+}
+
+.avatar-text {
+  fill: #666666;
+  font-size: 36px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-anchor: middle;
+}
+
+/* Detalhes Utilizador */
+.detail-label {
+  fill: #000000;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+.detail-value {
+  fill: #666666;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  text-anchor: end;
+}

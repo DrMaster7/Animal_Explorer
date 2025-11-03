@@ -1,0 +1,68 @@
+/* From activity.txt + Enhancements */
+.activity-panel {
+  fill: #ffffff;
+  stroke: #e0e0e0;
+  stroke-width: 1px;
+}
+
+.graph-area {
+  fill: #fafafa;
+  stroke: #e0e0e0;
+  stroke-width: 1px;
+}
+
+.grid-line {
+  stroke: #e0e0e0;
+  stroke-width: 1px;
+}
+
+.axis {
+  stroke: #666666;
+  stroke-width: 2px;
+}
+
+.y-label {
+  fill: #666666;
+  font-size: 12px;
+  text-anchor: end;
+  font-family: Arial, sans-serif;
+}
+
+.data-line {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.data-point {
+  fill: #000000;
+  cursor: pointer;
+}
+
+.data-point:hover {
+  r: 7;
+  fill: #333;
+}
+
+.x-label {
+  fill: #666666;
+  font-size: 12px;
+  text-anchor: middle;
+  font-family: Arial, sans-serif;
+}
+
+/* Back Button */
+#backRectActivity {
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+#backRectActivity:hover {
+  fill: #ddd;
+}
+
+#backTextActivity {
+  cursor: pointer;
+}
