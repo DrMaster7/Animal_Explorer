@@ -12,48 +12,56 @@ window.onload = (event) => {
     info.getLogs();
     window.info = info;
 
-    // Rever tudo abaixo
+// Mostrar Registo
+    showSignup = () => {
+        document.getElementById("headerTitle").textContent="Registo";
+        //clearChart(); - Se usar gráficos.
+        replaceChilds(this.id,document.createElement("div"));
+        togglePage('signupPage');
+    };
 
+// Mostrar Login
+    showLogin = () => {
+        document.getElementById("headerTitle").textContent="Login";
+        //clearChart(); - Se usar gráficos.
+        replaceChilds(this.id,document.createElement("div"));
+        togglePage('loginPage');
+    };
 
+// Mostrar Dashboard
+    showDashboard = () => {
+        document.getElementById("headerTitle").textContent="Dashboard";
+        //clearChart(); - Se usar gráficos.
+        replaceChilds(this.id,document.createElement("div"));
+        togglePage('dashboardPage');
+    };
 
+// Mostrar Atividade
+    showActivity = () => {
+        document.getElementById("headerTitle").textContent="Atividade";
+        //clearChart(); - Se usar gráficos.
+        replaceChilds(this.id,document.createElement("div"));
+        togglePage('activityPage');
+    };
 
-
-
-
-
-    // Navigation
-function showSignup() { 
-    togglePage('signupPage');
-}
-
-function showLogin() { 
-    togglePage('loginPage');
-}
-
-function showDashboard() {
-    togglePage('dashboardPage');
-}
-
-function showActivity() {
-    togglePage('activityPage');
-}
-
+// Voltar ao Main
 function goToMain() { 
     togglePage('mainPage'); 
     document.body.classList.add('main-page'); 
 }
 
+// Mostrar Registo
 function togglePage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
-// Validation
+// Validação
 function validateEmail(email) { 
     return email.endsWith('@gmail.com'); 
 }
 
-// Signup
+// Registo
 function handleSignup(e) {
     e.preventDefault();
     const email = signupEmail.value.trim();
@@ -77,7 +85,7 @@ function handleLogin(e) {
     goToMain();
 }
 
-// Back button logic
+// Botão Login
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('backRectDashboard').addEventListener('click', goToMain);
     document.getElementById('backTextDashboard').addEventListener('click', goToMain);
