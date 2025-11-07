@@ -1,0 +1,41 @@
+.activity-panel { fill: #ffffff; stroke: #e0e0e0; stroke-width: 1px; }
+.graph-area { fill: #fafafa; stroke: #e0e0e0; stroke-width: 1px; }
+.grid-line { stroke: #e0e0e0; stroke-width: 1px; }
+.axis { stroke: #666666; stroke-width: 2px; }
+.y-label { fill: #666666; font-size: 12px; text-anchor: end; font-family: Arial, sans-serif; }
+.x-label { fill: #666666; font-size: 12px; text-anchor: middle; font-family: Arial, sans-serif; }
+.data-line { fill: none; stroke: #000000; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+.data-point { fill: #000000; cursor: pointer; }
+.data-point:hover { r: 7; fill: #333; }
+#backRectActivity { cursor: pointer; transition: fill 0.2s; }
+#backRectActivity:hover { fill: #ddd; }
+#backTextActivity { cursor: pointer; }
+.dashboard-panel { fill: #ffffff; stroke: #e0e0e0; stroke-width: 1px; }
+
+/* USER INFO STYLES */
+.detail-label {
+  fill: #000000;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+.detail-value {
+  fill: #666666;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+}
+
+/* LOGOUT BUTTON */
+#logoutBtnRect {
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+#logoutBtnRect:hover {
+  fill: #cc0000;
+}
+
+#logoutBtnText {
+  cursor: pointer;
+}
