@@ -1,0 +1,54 @@
+/* Painel Geral */
+.auth-panel {
+  fill: #ffffff;
+  stroke: #e0e0e0;
+  stroke-width: 1px;
+}
+
+/* Título Página */
+.auth-title {
+  fill: #000000;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-anchor: middle;
+}
+
+/* Inputs */
+.auth-input {
+  fill: #ffffff;
+  stroke: #cccccc;
+  stroke-width: 1.5px;
+}
+
+.auth-input-text {
+  fill: #666666;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+}
+
+/* Botões */
+.auth-button {
+  fill: #000000;
+}
+
+.auth-button-text {
+  fill: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: Arial, sans-serif;
+  text-anchor: middle;
+}
+
+/* Link Rodapé */
+.auth-footer-text {
+  fill: #666666;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+.auth-footer-link {
+  font-weight: bold;
+  text-decoration: underline;
+  fill: #000000;
+}
