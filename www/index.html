@@ -15,15 +15,15 @@
         <h2>Log In</h2>
         <form onsubmit="handleLogin(event)">
             <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="E-mail" required />
+                <input type="email" id="loginEmail" placeholder="Email" required />
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Password" required />
+                <input type="password" id="loginPassword" placeholder="Palavra-Passe" required />
             </div>
             <button type="submit">Log In</button>
         </form>
         <div class="footer-text">
-            Don't have an account? <a onclick="showSignup()">Sign up</a>
+            Não tem uma conta? <a onclick="showLoginToSignup()">Registe-se</a>
         </div>
     </div>
 </div>
@@ -31,21 +31,24 @@
 <!-- Registo -->
 <div id="signupPage" class="page">
     <div class="container">
-        <h2>Sign Up</h2>
+        <h2>Registo</h2>
         <form onsubmit="handleSignup(event)">
             <div class="form-group">
-                <input type="email" id="signupEmail" placeholder="E-mail" required />
+                <input type="name" id="signupName" placeholder="Nome" required />
             </div>
             <div class="form-group">
-                <input type="password" id="signupPassword" placeholder="Password" required />
+                <input type="email" id="signupEmail" placeholder="Email" required />
             </div>
             <div class="form-group">
-                <input type="password" id="signupConfirm" placeholder="Confirm Password" required />
+                <input type="password" id="signupPassword" placeholder="Palavra-Passe" required />
             </div>
-            <button type="submit">Sign Up</button>
+            <div class="form-group">
+                <input type="password" id="signupConfirm" placeholder="Confirmar Palavra-Passe" required />
+            </div>
+            <button type="submit">Registar</button>
         </form>
         <div class="footer-text">
-            Already have an account? <a onclick="showLogin()">Log in</a>
+            Já tem uma conta? <a onclick="showSignupToLogin()">Log In</a>
         </div>
     </div>
 </div>

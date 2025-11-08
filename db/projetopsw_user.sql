@@ -26,7 +26,7 @@ CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_name` varchar(30) NOT NULL,
   `user_email` varchar(45) NOT NULL,
-  `user_password` varchar(20) NOT NULL,
+  `user_password` varchar(64) NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

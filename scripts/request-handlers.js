@@ -1,22 +1,22 @@
 "use strict";
 const mysql = require("mysql2");
 const options = require("./connectionOptions.json");
+const bcrypt = require("bcrypt");
 
 /**
  * Função específica para executar queries que irão atuar e interagir com as colunas da base de dados (dependendo do pedido), 
  * evitando assim duplicação de código.
  * @param {*} res
- * @param {*} query
+ * @param {*} sql
  * @param {*} label
  */
-function runQuery(res, query, label) {
+function runQuery(res, sql, label) {
     var connection = mysql.createConnection(options);
     connection.connect();
     connection.query(sql, function (err, rows, fields) {
         if (err) {
             res.status(404).json({ "Message": `Error - MySQL query to ${label}` });
         } else {
-            res.send(rows);
             res.status(200).json({ "Message": "Success", [label]: rows });
         }
     });
@@ -31,23 +31,86 @@ function runQuery(res, query, label) {
  * @param {Object} res
  */
 const crudUsers = (req, res) => {
-    var name = req.body.name;
-    var email = req.body.email;
-    var password = req.body.password;
-    if (req.method === "POST") { // Se o método REST for POST (Create)
-        runQuery(res, mysql.format("INSERT INTO user (name, email, password) VALUES (?, ?, ?)", [name, email, password]));
-    } else if (req.method === "GET") { // Se o método REST for GET (Read)
-        runQuery(res, "SELECT user_id, user_name, user_email, user_password FROM user", "user");
-    } else if (req.method === "PUT") { // Se o método REST for PUT (Update)
-        runQuery(res, mysql.format("UPDATE user SET name = ?, email = ?, password = ? WHERE id = ?", [name, email, password, req.params.id]));
-    } else if (req.method === "DELETE") { // Se o método REST for DELETE (Delete)
-        runQuery(res, mysql.format("DELETE FROM user WHERE id = ?", [req.params.id]));
-        runQuery(res, mysql.format("DELETE FROM logs WHERE log_user_id = ?", [req.params.id]));
+    const id = req.params.id;
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+    const hash = bcrypt.hashSync(password, 10);
+    
+    if (req.method === "PUT") { // Se o método REST for PUT (Update) - Atualizar dados da Conta
+        runQuery(res, mysql.format("UPDATE user SET user_name = ?, user_email = ?, user_password = ? WHERE id = ?", [name, email, hash, id]), "user");
+    } else if (req.method === "DELETE") { // Se o método REST for DELETE (Delete) - Eliminar Conta
+        runQuery(res, mysql.format("DELETE FROM user WHERE user_id = ?", [id]), "user");
+        runQuery(res, mysql.format("DELETE FROM logs WHERE log_user_id = ?", [id]), "logs");
     } else { // Caso não seja encontrado nenhum método REST
         res.status(404).json({ "Message": `Error - MySQL method not found` });
     }
 }
 module.exports.crudUsers = crudUsers;
+
+/**
+ * Função que permite lidar com os novos utilizadores que se registam no registo, recorrendo ao POST.
+ * 
+ * @param {Object} req
+ * @param {Object} res
+ */
+const handleSignup = (req, res) => {
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+    const hash = bcrypt.hashSync(password, 10);
+    
+    var connection = mysql.createConnection(options);
+    connection.connect();
+    connection.query(mysql.format("INSERT INTO user (user_name, user_email, user_password) VALUES (?, ?, ?)", [name, email, hash]), function (err, rows, fields) {
+        if (err) {
+            if (err.code === 'ER_DUP_ENTRY') { // Código de erro 1062 é tipicamente para entrada duplicada (ex: email repetido)
+                res.status(409).json({ "Message": "Erro - Outra conta já utiliza esse email." });
+            } else {
+                res.status(500).json({ "Message": `Erro - MySQL query to signup: ${err.message}` });
+            }
+        } else {
+            res.status(200).json({ "Message": "Sucesso - Conta registada no Animal Explorer. Bem-vindo.", "user_id": rows.insertId });
+            window.showSignupToLogin();
+        }
+    });
+    connection.end();
+}
+module.exports.handleSignup = handleSignup;
+
+/**
+ * Função que permite lidar com os logins dos utilizadores recorrendo ao POST.
+ * 
+ * @param {Object} req
+ * @param {Object} res
+ */
+const handleLogin = (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    
+    var connection = mysql.createConnection(options);
+    connection.connect();
+    connection.query(mysql.format("SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = ?", [email]), function (err, rows) {
+        if (err) {
+            res.status(500).json({ "Message": `Error - MySQL query to login: ${err.message}` });
+        } else if (rows.length === 0) { // Utilizador não encontrado
+            res.status(401).json({ "Message": "Erro - Dados inseridos incorretamente." });
+        } else {
+            const user = rows[0];
+            bcrypt.compare(password, user.user_password, function(err, result) { // Comparar a password fornecida com a hash armazenada
+                if (result === true) { // Login bem-sucedido, removendo a password antes de enviar o objeto de volta.
+                    delete user.user_password;
+                    res.status(200).json({ "Message": "Sucesso - Login bem-sucedido. Bem-vindo.", "user": user });
+                    window.showLoginToMain();
+                } else { // Password incorreta
+                    res.status(401).json({ "Message": "Dados inseridos incorretamente." });
+                }
+            });
+        }
+    });
+    connection.end();
+}
+module.exports.handleLogin = handleLogin;
 
 /**
  * Função para retornar a lista de animais da tabela animal (recorrendo à função runQuery).
