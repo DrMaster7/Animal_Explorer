@@ -11,6 +11,9 @@ const DUMMY_USER = {
   password: "secret123"
 };
 
+// Track current species for "Voltar"
+let currentSpecies = '';
+
 // ---------- Session Tracking ----------
 let sessionStart = Date.now();
 let loginCount = 0;
@@ -158,6 +161,7 @@ function clearForms() {
 
 
 function showSpeciesDetail(species) {
+  currentSpecies = species;
   const headerTitle = document.getElementById('speciesHeaderTitle');
   const contentTitle = document.getElementById('speciesContentTitle');
   const grid = document.getElementById('animalGrid');
@@ -185,9 +189,101 @@ function showSpeciesDetail(species) {
 
   const list = animals[species] || [];
 
-  list.forEach(animal => {
+list.forEach(animal => {
+  const card = document.createElement('div');
+  card.className = 'animal-card';
+  card.onclick = () => showAnimalProfile(animal);  // CLICK OPENS PROFILE
+  card.innerHTML = `
+    <div class="animal-image" style="background-image: url('${animal.img}');"></div>
+    <div class="animal-name">${animal.name}</div>
+  `;
+  grid.appendChild(card);
+});
+
+  showPage('speciesDetailPage');
+}
+
+function showAnimalProfile(animal) {
+  const name = animal.name || 'Unknown';
+  const img = animal.img || 'https://via.placeholder.com/400';
+  const population = animal.population || 'Unknown';
+  const status = animal.status || 'Unknown';
+  const description = animal.description || 'No description available.';
+
+  // Update header
+  document.getElementById('animalProfileName').textContent = name;
+  document.getElementById('animalProfileTitle').textContent = name;
+
+  // Update image
+  document.getElementById('animalProfileImage').src = img;
+
+  // Update details
+  document.getElementById('animalPopulation').textContent = population;
+  const statusEl = document.getElementById('animalStatus');
+  statusEl.textContent = status;
+  statusEl.className = 'animal-value ' + (status.includes('Endangered') || status.includes('Vulnerable') ? 'status-endangered' : 'status-safe');
+
+  // Update description
+  document.getElementById('animalDescription').textContent = description;
+
+  showPage('animalProfilePage');
+}
+
+// ===========================================
+// SPECIES_DATA — ALL SPECIES (NAME + IMG ONLY)
+// ===========================================
+
+const SPECIES_DATA = {
+  'Mammals': [
+    { name: 'Lion', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/400px-Lion_waiting_in_Namibia.jpg' },
+    { name: 'Elephant', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/African_Elephant_%28Loxodonta_africana%29_male_%2831755979696%29.jpg/400px-African_Elephant_%28Loxodonta_africana%29_male_%2831755979696%29.jpg' },
+    { name: 'Dog', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Golden_retriever_standing_Tucker.jpg/400px-Golden_retriever_standing_Tucker.jpg' },
+    { name: 'Cat', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/400px-Cat03.jpg' },
+    { name: 'Bear', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/American_Black_Bear_%2819092155893%29.jpg/400px-American_Black_Bear_%2819092155893%29.jpg' },
+    { name: 'Wolf', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Gray_wolf_in_British_Columbia.jpg/400px-Gray_wolf_in_British_Columbia.jpg' }
+  ],
+  'Birds': [
+    { name: 'Eagle', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Bald_Eagle_%28Haliaeetus_leucocephalus%29_%28514630612%29.jpg/400px-Bald_Eagle_%28Haliaeetus_leucocephalus%29_%28514630612%29.jpg' },
+    { name: 'Parrot', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Scarlet_Macaw_%28Ara_macao%29_%282%29.jpg/400px-Scarlet_Macaw_%28Ara_macao%29_%282%29.jpg' },
+    { name: 'Owl', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Great_Horned_Owl_%28Bubo_virginianus%29_%282%29.jpg/400px-Great_Horned_Owl_%28Bubo_virginianus%29_%282%29.jpg' }
+  ],
+  'Reptiles': [
+    { name: 'Crocodile', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Nile_crocodile_%28Crocodylus_niloticus%29_head.jpg/400px-Nile_crocodile_%28Crocodylus_niloticus%29_head.jpg' },
+    { name: 'Turtle', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Green_Sea_Turtle_grazing_seagrass.jpg/400px-Green_Sea_Turtle_grazing_seagrass.jpg' },
+    { name: 'Snake', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Black_mamba_%28Dendroaspis_polylepis%29.jpg/400px-Black_mamba_%28Dendroaspis_polylepis%29.jpg' }
+  ],
+  'Amphibians': [
+    { name: 'Frog', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Rana_temporaria_%28cropped%29.jpg/400px-Rana_temporaria_%28cropped%29.jpg' },
+    { name: 'Salamander', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Tiger_Salamander_%28Ambystoma_tigrinum%29.jpg/400px-Tiger_Salamander_%28Ambystoma_tigrinum%29.jpg' },
+    { name: 'Newt', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Smooth_newt_%28Lissotriton_vulgaris%29.jpg/400px-Smooth_newt_%28Lissotriton_vulgaris%29.jpg' }
+  ],
+  'Fish': [
+    { name: 'Shark', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Great_white_shark_south_africa.jpg/400px-Great_white_shark_south_africa.jpg' },
+    { name: 'Clownfish', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Amphiprion_ocellaris_%28Clown_anemonefish%29_in_Heteractis_magnifica_%28Magnificent_sea_anemone%29.jpg/400px-Amphiprion_ocellaris_%28Clown_anemonefish%29_in_Heteractis_magnifica_%28Magnificent_sea_anemone%29.jpg' },
+    { name: 'Tuna', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Atlantic_bluefin_tuna.jpg/400px-Atlantic_bluefin_tuna.jpg' }
+  ],
+  'Insects': [
+    { name: 'Butterfly', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Monarch_Butterfly_Danaus_plexippus_Feeding_Durham_NC_2735.jpg/400px-Monarch_Butterfly_Danaus_plexippus_Feeding_Durham_NC_2735.jpg' },
+    { name: 'Bee', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Honey_bee_on_a_dandelion%2C_Sandy%2C_Bedfordshire_%2826585751974%29.jpg/400px-Honey_bee_on_a_dandelion%2C_Sandy%2C_Bedfordshire_%2826585751974%29.jpg' },
+    { name: 'Ladybug', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Coccinella_magnifica_%28Red_seven-spot_ladybird%29.jpg/400px-Coccinella_magnifica_%28Red_seven-spot_ladybird%29.jpg' }
+  ]
+};
+
+// Show Species Detail Page
+window.showSpeciesDetail = (species) => {
+  currentSpecies = species;
+  document.getElementById('speciesHeaderTitle').textContent = species;
+  document.getElementById('speciesContentTitle').textContent = species;
+
+  const grid = document.getElementById('animalGrid');
+  grid.innerHTML = '';
+
+  const animals = SPECIES_DATA[species] || [];
+
+  animals.forEach(animal => {
     const card = document.createElement('div');
     card.className = 'animal-card';
+    card.onclick = () => showAnimalProfile(animal);
     card.innerHTML = `
       <div class="animal-image" style="background-image: url('${animal.img}');"></div>
       <div class="animal-name">${animal.name}</div>
@@ -196,8 +292,34 @@ function showSpeciesDetail(species) {
   });
 
   showPage('speciesDetailPage');
-}
+};
 
+// Show Animal Profile Page (FULL HTML)
+window.showAnimalProfile = (animal) => {
+  const name = animal.name || 'Unknown';
+  const img = animal.img || 'https://via.placeholder.com/400';
+
+  // Update header + title
+  document.getElementById('animalProfileName').textContent = name;
+  document.getElementById('animalProfileTitle').textContent = name;
+
+  // Update image
+  document.getElementById('animalProfileImage').src = img;
+
+  // Placeholder for future data
+  document.getElementById('animalPopulation').textContent = 'Loading...';
+  document.getElementById('animalStatus').textContent = 'Loading...';
+  document.getElementById('animalDescription').textContent = 'Loading...';
+
+  showPage('animalProfilePage');
+};
+
+// Reuse your existing showPage
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+}
 
 // Initial update
 updateDashboard();

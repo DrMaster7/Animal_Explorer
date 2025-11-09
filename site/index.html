@@ -67,15 +67,34 @@
     <h2 class="page-title">Choose an Animal Species</h2>
     <input type="text" class="search-bar" placeholder="Search for a specific animal..." />
     <div class="species-grid">
-      <div class="species-card" onclick="showSpeciesDetail('Mammals')">
-        <h3>Mammals</h3>
-        <p>Dogs, Cats, Bears,<br>Elephants...</p>
+      <div class="species-card" onclick="showSpeciesDetail('Mammals')"><h3>Mammals</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Birds')"><h3>Birds</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Reptiles')"><h3>Reptiles</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Amphibians')"><h3>Amphibians</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Fish')"><h3>Fish</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Insects')"><h3>Insects</h3></div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- SPECIES DETAIL PAGE -->
+<div id="speciesDetailPage" class="page">
+  <div class="content-wrapper">
+    <div class="species-detail-header">
+      <h1 id="speciesHeaderTitle">Mammals</h1>
+      <div class="species-detail-nav">
+        <button class="species-detail-button" onclick="showMainToDashboard()">Dashboard</button>
+        <button class="species-detail-button" onclick="showMainToActivity()">Activity</button>
+        <button class="species-detail-button" onclick="showMain()">Voltar</button>
       </div>
-      <div class="species-card"><h3>Birds</h3><p>Eagles, Parrots, Owls...</p></div>
-      <div class="species-card"><h3>Reptiles</h3><p>Snakes, Lizards, Turtles...</p></div>
-      <div class="species-card"><h3>Fish</h3><p>Sharks, Goldfish, Salmon...</p></div>
-      <div class="species-card"><h3>Amphibians</h3><p>Frogs, Toads, Salamanders...</p></div>
-      <div class="species-card"><h3>Invertebrates</h3><p>Insects, Spiders, Jellyfish...</p></div>
+    </div>
+
+    <div class="species-detail-content">
+      <h2 class="species-detail-title" id="speciesContentTitle">Mammals</h2>
+      <div class="animal-grid" id="animalGrid">
+        <!-- Cards injected by JS -->
+      </div>
     </div>
   </div>
 </div>
@@ -99,7 +118,7 @@
         <text id="backTextDashboard" x="875" y="48" font-family="Arial" font-size="14" font-weight="600" text-anchor="middle" fill="#000">Back to Main</text>
 
         <!-- BIGGER USER INFO PANEL -->
-        <rect x="50" y="120" width="900" height="240" class="dashboard-panel" rx="12"/>
+        <rect x="50" y="120" width="1000" height="600" class="dashboard-panel" rx="12"/>
 
         <!-- Avatar -->
         <circle cx="150" cy="240" r="60" fill="#e0e0e0"/>
@@ -215,6 +234,44 @@
     <h2 class="species-detail-title" id="speciesContentTitle">Mammals</h2>
     <div class="animal-grid" id="animalGrid">
       <!-- Cards injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ANIMAL PROFILE PAGE -->
+<div id="animalProfilePage" class="page">
+  <div class="content-wrapper">
+    <div class="animal-profile-header">
+      <h1 id="animalProfileName">Lion</h1>
+      <div class="animal-profile-nav">
+        <button class="animal-profile-button" onclick="showDashboard()">Dashboard</button>
+        <button class="animal-profile-button" onclick="showActivity()">Activity</button>
+        <button class="animal-profile-button" onclick="showSpeciesDetail(currentSpecies)">Voltar</button>
+      </div>
+    </div>
+
+    <div class="animal-profile-content">
+      <div class="animal-image-container">
+        <img id="animalProfileImage" class="animal-image" src="" alt="Animal">
+      </div>
+
+      <div class="animal-info">
+        <div class="animal-name" id="animalProfileTitle">Lion</div>
+
+        <div class="animal-detail">
+          <span class="animal-label">Population:</span>
+          <span class="animal-value" id="animalPopulation">~20,000 (wild)</span>
+        </div>
+
+        <div class="animal-detail">
+          <span class="animal-label">Status:</span>
+          <span id="animalStatus" class="animal-value status-endangered">Vulnerable</span>
+        </div>
+
+        <div class="animal-description" id="animalDescription">
+          The lion is a large cat of the genus Panthera native to Africa and India...
+        </div>
+      </div>
     </div>
   </div>
 </div>
