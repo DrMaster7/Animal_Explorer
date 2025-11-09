@@ -31,16 +31,6 @@ window.showDashboardToMain = () => {
     document.getElementById("mainPage").classList.add("active");
 }
 
-window.showMainToActivity = () => {
-    document.getElementById("mainPage").classList.remove("active");
-    document.getElementById("activityPage").classList.add("active");
-}
-
-window.showActivityToMain = () => {
-    document.getElementById("activityPage").classList.remove("active");
-    document.getElementById("mainPage").classList.add("active");
-}
-
 // Registo
 window.handleSignup = (event) => {
     event.preventDefault();

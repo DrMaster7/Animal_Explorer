@@ -59,7 +59,6 @@
         <h1>Animal Explorer</h1>
         <div class="nav-buttons">
             <button class="nav-button" onclick="showMainToDashboard()">Dashboard</button>
-            <button class="nav-button" onclick="showMainToActivity()">Atividade</button>
             <button class="nav-button" onclick="handleLogout()">Terminar Sessão</button>
         </div>
     </div>
@@ -77,7 +76,7 @@
     </div>
 </div>
 
-<!-- Dashboard e Atividade -->
+<!-- Painel de Atividade (Dashboard) -->
 <div id="dashboardPage" class="page">
     <div class="header">
         <h1>Animal Explorer</h1>
@@ -86,33 +85,17 @@
     </div>
     <div style="text-align:center;">
         <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
-            <rect width="1000" height="700" fill="#f5f5f5"/>
-            <rect x="0" y="0" width="1000" height="80" fill="#000"/>
-            <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Dashboard</text>
-        </svg>
-    </div>
-</div>
-
-<!-- Página de Atividade -->
-<div id="activityPage" class="page">
-    <div class="header">
-        <h1>Animal Explorer</h1>
-        <br>
-        <button class="nav-button" onclick="showActivityToMain()">← Voltar</button>
-    </div>
-    <div style="text-align:center;">
-        <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
             <!-- Fundo -->
             <rect width="1000" height="700" fill="#f5f5f5"/>
             
             <!-- Header -->
             <rect x="0" y="0" width="1000" height="80" fill="#000"/>
-            <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Atividade</text>
+            <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Dashboard</text>
 
             <!-- Painel Principal -->
             <rect x="50" y="120" width="900" height="530" class="activity-panel"/>
-            <text x="500" y="170" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle" fill="#000">Atividade</text>
-            <text x="500" y="195" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">Número de Logins por dia</text>
+            <text x="500" y="170" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle" fill="#000">Dashboard</text>
+            <text x="500" y="195" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">Número de Logins (por dia)</text>
 
             <!-- Área do Gráfico -->
             <rect x="100" y="240" width="800" height="350" class="graph-area"/>
@@ -160,6 +143,5 @@
         </svg>
     </div>
 </div>
-
 </body>
 </html>
