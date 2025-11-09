@@ -1,0 +1,102 @@
+/* =========================================== */
+/* ANIMAL PROFILE LAYOUT: IMAGE ON LEFT       */
+/* =========================================== */
+
+.animal-profile-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.animal-image-container {
+  flex: 0 0 300px;           /* Fixed width */
+  height: 300px;             /* Square */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+#animalProfileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* Keeps image square & cropped nicely */
+  display: block;
+}
+
+.animal-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.animal-name {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.animal-detail {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.animal-label {
+  font-weight: bold;
+  color: #000;
+  margin-right: 8px;
+}
+
+.animal-value {
+  color: #333;
+}
+
+.status-endangered {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.status-safe {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.animal-description {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #444;
+  text-align: justify;
+}
+
+/* =========================================== */
+/* "VOLTAR" BUTTON — SAME STYLE, LEFT-ALIGNED */
+/* =========================================== */
+
+.profile-button-wrapper {
+  margin-top: 24px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.profile-button-wrapper .nav-button {
+  width: auto;
+  padding: 10px 20px;
+  background: transparent;
+  color: #000;
+  border: 2px solid #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.profile-button-wrapper .nav-button:hover {
+  background: #000;
+  color: white;
+}

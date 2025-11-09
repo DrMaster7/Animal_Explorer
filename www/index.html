@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>Animal Explorer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="styles/projetopsw.css" />
-    <script src="scripts/projetopsw.js" defer></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/animalexplorer.css" />
+    <script src="scripts/animalexplorer.js" defer></script>
 </head>
 <body onload="window.loginStatus()">
 
@@ -23,7 +23,7 @@
             <button type="submit">Log In</button>
         </form>
         <div class="footer-text">
-            Não tem uma conta? <a onclick="showLoginToSignup()">Registe-se</a>
+            Não tem uma conta? <a onclick="showToSignup()">Registe-se</a>
         </div>
     </div>
 </div>
@@ -48,7 +48,7 @@
             <button type="submit">Registar</button>
         </form>
         <div class="footer-text">
-            Já tem uma conta? <a onclick="showSignupToLogin()">Log In</a>
+            Já tem uma conta? <a onclick="showToLogin()">Log In</a>
         </div>
     </div>
 </div>
@@ -58,90 +58,133 @@
     <div class="header">
         <h1>Animal Explorer</h1>
         <div class="nav-buttons">
-            <button class="nav-button" onclick="showMainToDashboard()">Dashboard</button>
+            <button class="nav-button" onclick="showToDashboard()">Dashboard</button>
             <button class="nav-button" onclick="handleLogout()">Terminar Sessão</button>
         </div>
     </div>
     <div class="main-content">
-        <h2 class="page-title">Escolha uma espécie de animais</h2>
-        <input type="text" class="search-bar" placeholder="Pesquise por um animal específico..." />
-        <div class="species-grid">
-            <div class="species-card"><h3>Mamíferos</h3><p>Cães, Gatos, Ursos...</p></div>
-            <div class="species-card"><h3>Aves</h3><p>Águias, Papagaios, Corujas...</p></div>
-            <div class="species-card"><h3>Répteis</h3><p>Cobras, Lagartos, Tartarugas...</p></div>
-            <div class="species-card"><h3>Peixes</h3><p>Tubarões, Peixes-Dourados, Salmões...</p></div>
-            <div class="species-card"><h3>Anfíbios</h3><p>Sapos, Cobras-Cegas, Salamandras...</p></div>
-            <div class="species-card"><h3>Invertebrados</h3><p>Insetos, Aranhas, Águas-Vivas...</p></div>
-        </div>
+    <h2 class="page-title">Escolha uma espécie:</h2>
+    <div class="species-grid">
+      <div class="species-card" onclick="showSpeciesDetail('Mamiferos')"><h3>Mamiferos</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Aves')"><h3>Aves</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Repteis')"><h3>Répteis</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Anfibios')"><h3>Anfíbios</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Peixes')"><h3>Peixes</h3></div>
+      <div class="species-card" onclick="showSpeciesDetail('Insetos')"><h3>Insetos</h3></div>
     </div>
+    </div>
+  </div>
 </div>
 
-<!-- Painel de Atividade (Dashboard) -->
+<!-- Pagina de detalhes especies -->
+<div id="speciesDetailPage" class="page">
+  <div class="content-wrapper">
+    <div class="species-detail-header">
+      <h1 id="speciesHeaderTitle">Mamíferos</h1>
+      <div class="species-detail-nav">
+        <button class="species-detail-button" onclick="showToMain()">Voltar</button>
+      </div>
+    </div>
+
+    <div class="species-detail-content">
+      <h2 class="species-detail-title" id="speciesContentTitle">Mamíferos</h2>
+      <div class="animal-grid" id="animalGrid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+<div id="animalProfilePage" class="page">
+  <div class="content-wrapper">
+    <!-- REMOVE ALL THIS:
+    <div class="animal-profile-header"></div>
+    <h1 id="animalProfileName">Lion</h1>
+    <div class="animal-profile-nav">...</div>
+    -->
+
+    <!-- NEW: CLEAN CONTENT -->
+    <div class="animal-profile-content">
+      <div class="animal-image-container">
+        <img id="animalProfileImage" class="animal-image" src="" alt="Animal">
+      </div>
+      <div class="animal-info">
+        <div class="animal-name" id="animalProfileTitle">Leão</div>
+        <div class="animal-detail">
+          <span class="animal-label">Population:</span>
+          <span class="animal-value" id="animalPopulation">~20.000</span>
+        </div>
+        <div class="animal-detail">
+          <span class="animal-label">Status:</span>
+          <span id="animalStatus" class="animal-value status-endangered">Vulnerável</span>
+        </div>
+        <div class="animal-description" id="animalDescription">
+          O leão é um grande felino...
+        </div>
+
+        <!-- "VOLTAR" BUTTON BELOW -->
+        <div class="profile-button-wrapper">
+            <button class="nav-button" onclick="showSpeciesDetail(currentSpecies)">Voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard -->
 <div id="dashboardPage" class="page">
+  <div class="content-wrapper">
     <div class="header">
-        <h1>Animal Explorer</h1>
-        <br>
-        <button class="nav-button" onclick="showDashboardToMain()">← Voltar</button>
+      <h1>Dashboard</h1>
+      <div class="nav-buttons">
+        <button class="nav-button" onclick="showToMain()">Voltar</button>
+      </div>
     </div>
-    <div style="text-align:center;">
-        <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
-            <!-- Fundo -->
-            <rect width="1000" height="700" fill="#f5f5f5"/>
-            
-            <!-- Header -->
-            <rect x="0" y="0" width="1000" height="80" fill="#000"/>
-            <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Dashboard</text>
 
-            <!-- Painel Principal -->
-            <rect x="50" y="120" width="900" height="530" class="activity-panel"/>
-            <text x="500" y="170" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle" fill="#000">Dashboard</text>
-            <text x="500" y="195" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">Número de Logins (por dia)</text>
+    <div class="main-content">
+        <div style="display: flex; gap: 40px; align-items: flex-start;">
+        <div style="text-align: center;">
+            <div style="width: 120px; height: 120px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <span style="font-size: 48px; font-weight: bold; color: #666;">US</span>
+            </div>
+        </div>
 
-            <!-- Área do Gráfico -->
-            <rect x="100" y="240" width="800" height="350" class="graph-area"/>
+        <div class="user-info-container"> <h2 style="margin: 0 0 10px; font-size: 24px;" id="userName">Utilizador</h2>
+      
+        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
+            <span style="font-weight: bold; margin-left: 10px;">Email:</span>
+            <span id="userEmail">user@example.com</span>
+        </div>
 
-            <!-- Linhas de Grelha -->
-            <line x1="100" y1="520" x2="900" y2="520" class="grid-line"/>
-            <line x1="100" y1="450" x2="900" y2="450" class="grid-line"/>
-            <line x1="100" y1="380" x2="900" y2="380" class="grid-line"/>
-            <line x1="100" y1="310" x2="900" y2="310" class="grid-line"/>
-            <line x1="100" y1="240" x2="900" y2="240" class="grid-line"/>
+        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
+            <span style="font-weight: bold; margin-left: 10px;">Password:</span>
+            <span id="userPassword">********</span>
+        </div>
 
-            <!-- Etiquetas do Eixo Y -->
-            <text x="85" y="525" class="y-label">0</text>
-            <text x="85" y="455" class="y-label">2</text>
-            <text x="85" y="385" class="y-label">4</text>
-            <text x="85" y="315" class="y-label">6</text>
-            <text x="85" y="245" class="y-label">8</text>
+        <button class="dashboard-button" onclick="toggleUpdateForm(true)" style="margin-left: 10px;">Atualizar Dados</button>
 
-            <!-- Linhas de Dados -->
-            <polyline class="data-line" points="150,485 250,450 350,380 450,415 550,345 650,310 750,380 850,450"/>
+        <div id="updateForm" style="display: none; margin-top: 20px;"> <label for="updateName" style="margin-left: 10px;">Novo Nome:</label>
+            <input type="text" id="updateName" placeholder="Deixe vazio para manter o nome atual" style="margin-left: 10px; width: 100%;">
+            <br />
+            <label for="updateEmail" style="margin-left: 10px;">Novo Email:</label>
+            <input type="email" id="updateEmail" placeholder="Deixe vazio para manter o email atual" style="margin-left: 10px; width: 100%;">
+            <br />
+            <label for="updatePassword" style="margin-left: 10px;">Nova Password:</label>
+            <input type="password" id="updatePassword" placeholder="Apenas se quiser alterar (mín. 6 car.)" style="margin-left: 10px; width: 100%;">
+            <br />
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="dashboard-button" onclick="window.handleUpdate()" style="margin-left: 10px; flex: 1;">Atualizar</button>
+                <button class="logout-button" onclick="toggleUpdateForm(false)" style="margin-left: 10px; flex: 1;">Cancelar</button>
+            </div>
+        </div>
 
-            <!-- Pontos de Dados -->
-            <circle class="data-point" cx="150" cy="485" r="5"/>
-            <circle class="data-point" cx="250" cy="450" r="5"/>
-            <circle class="data-point" cx="350" cy="380" r="5"/>
-            <circle class="data-point" cx="450" cy="415" r="5"/>
-            <circle class="data-point" cx="550" cy="345" r="5"/>
-            <circle class="data-point" cx="650" cy="310" r="5"/>
-            <circle class="data-point" cx="750" cy="380" r="5"/>
-            <circle class="data-point" cx="850" cy="450" r="5"/>
-
-            <!-- Etiquetas do eixo X -->
-            <text x="150" y="610" class="x-label">Mon</text>
-            <text x="250" y="610" class="x-label">Tue</text>
-            <text x="350" y="610" class="x-label">Wed</text>
-            <text x="450" y="610" class="x-label">Thu</text>
-            <text x="550" y="610" class="x-label">Fri</text>
-            <text x="650" y="610" class="x-label">Sat</text>
-            <text x="750" y="610" class="x-label">Sun</text>
-            <text x="850" y="610" class="x-label">Mon</text>
-
-            <!-- Eixos -->
-            <line x1="100" y1="240" x2="100" y2="520" class="axis"/>
-            <line x1="100" y1="520" x2="900" y2="520" class="axis"/>
-        </svg>
+        <div id="fixedButtons" style="margin-top: 20px;">
+            <button class="dashboard-button" onclick="window.handleLogout()" style="margin-left: 10px;">Terminar Sessão</button>
+            <button class="logout-button" onclick="window.handleDelete()" style="margin-left: 10px;">Eliminar Conta</button>
+        </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 </body>
 </html>

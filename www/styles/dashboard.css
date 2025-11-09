@@ -34,3 +34,51 @@
   font-family: Arial, sans-serif;
   text-anchor: end;
 }
+
+.dashboard-button {
+  margin-top: 30px;
+  padding: 14px 30px;
+  background: #000000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dashboard-button:hover {
+  background: #333333;
+}
+
+.logout-button {
+  margin-top: 30px;
+  padding: 14px 30px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #cc0000;
+}
+
+.user-info-container {
+    flex: 1;
+    min-height: 350px;
+}
+
+#dashboardPage .main-content {
+    padding: 20px;
+    min-height: 400px;
+}
+
+#updateForm {
+    margin-top: 20px;
+}
