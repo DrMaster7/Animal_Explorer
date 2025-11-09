@@ -71,7 +71,6 @@ const handleSignup = (req, res) => {
             }
         } else {
             res.status(200).json({ "Message": "Sucesso - Conta registada no Animal Explorer. Bem-vindo.", "user_id": rows.insertId });
-            window.showSignupToLogin();
         }
     });
     connection.end();
@@ -93,24 +92,68 @@ const handleLogin = (req, res) => {
     connection.query(mysql.format("SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = ?", [email]), function (err, rows) {
         if (err) {
             res.status(500).json({ "Message": `Error - MySQL query to login: ${err.message}` });
+            connection.end();
         } else if (rows.length === 0) { // Utilizador não encontrado
             res.status(401).json({ "Message": "Erro - Dados inseridos incorretamente." });
+            connection.end();
         } else {
             const user = rows[0];
             bcrypt.compare(password, user.user_password, function(err, result) { // Comparar a password fornecida com a hash armazenada
                 if (result === true) { // Login bem-sucedido, removendo a password antes de enviar o objeto de volta.
+                    req.session.user = {
+                        user_id: user.user_id,
+                        user_name: user.user_name,
+                        user_email: user.user_email
+                    };
                     delete user.user_password;
-                    res.status(200).json({ "Message": "Sucesso - Login bem-sucedido. Bem-vindo.", "user": user });
-                    window.showLoginToMain();
+                    res.status(200).json({ "Message": "Sucesso - Login bem-sucedido. Bem-vindo.", "user": req.session.user });
                 } else { // Password incorreta
                     res.status(401).json({ "Message": "Dados inseridos incorretamente." });
                 }
+                connection.end();
             });
         }
     });
-    connection.end();
 }
 module.exports.handleLogin = handleLogin;
+
+/**
+ * Função que permite lidar com os logouts dos utilizadores.
+ * 
+ * @param {Object} req
+ * @param {Object} res
+ */
+const handleLogout = (req, res) => {
+    req.session.destroy(err => { // Destrói a sessão no servidor e limpa o cookie.
+        if (err) {
+            return res.status(500).json({ "Message": "Erro ao fazer logout." });
+        }
+        res.clearCookie('connect.sid'); // 'connect.sid' = Nome padrão do cookie de sessão do Express
+        res.status(200).json({ "Message": "Sucesso - Logout bem-sucedido." });
+    });
+}
+module.exports.handleLogout = handleLogout;
+
+/**
+ * Função que permite verificar se existe alguma sessão iniciado recorrendo aos cookies, evitando assim que o utilizador que
+ * tenha feito login anteriormente tenha de fazer outra vez enquanto o cookie estiver ativado.
+ * 
+ * @param {Object} req
+ * @param {Object} res
+ */
+const handleCheckSession = (req, res) => {
+    if (req.session.user) {
+        res.status(200).json({ 
+            "Message": "Sessão ativa", "user": req.session.user 
+        });
+    } else {
+        // Sessão inativa ou cookie expirado/ausente
+        res.status(401).json({ 
+            "Message": "Sessão inativa. É necessário login." 
+        });
+    }
+}
+module.exports.handleCheckSession = handleCheckSession;
 
 /**
  * Função para retornar a lista de animais da tabela animal (recorrendo à função runQuery).

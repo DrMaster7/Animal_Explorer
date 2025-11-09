@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="styles/projetopsw.css" />
     <script src="scripts/projetopsw.js" defer></script>
 </head>
-<body>
+<body onload="window.loginStatus()">
 
 <!-- Login -->
 <div id="loginPage" class="page active">
@@ -58,78 +58,83 @@
     <div class="header">
         <h1>Animal Explorer</h1>
         <div class="nav-buttons">
-            <button class="nav-button" onclick="showDashboard()">Dashboard</button>
-            <button class="nav-button" onclick="showActivity()">Activity</button>
+            <button class="nav-button" onclick="showMainToDashboard()">Dashboard</button>
+            <button class="nav-button" onclick="showMainToActivity()">Atividade</button>
+            <button class="nav-button" onclick="handleLogout()">Terminar Sessão</button>
         </div>
     </div>
     <div class="main-content">
-        <h2 class="page-title">Choose an Animal Species</h2>
-        <input type="text" class="search-bar" placeholder="Search for a specific animal..." />
+        <h2 class="page-title">Escolha uma espécie de animais</h2>
+        <input type="text" class="search-bar" placeholder="Pesquise por um animal específico..." />
         <div class="species-grid">
-            <div class="species-card"><h3>Mammals</h3><p>Dogs, Cats, Bears,<br>Elephants...</p></div>
-            <div class="species-card"><h3>Birds</h3><p>Eagles, Parrots, Owls...</p></div>
-            <div class="species-card"><h3>Reptiles</h3><p>Snakes, Lizards, Turtles...</p></div>
-            <div class="species-card"><h3>Fish</h3><p>Sharks, Goldfish, Salmon...</p></div>
-            <div class="species-card"><h3>Amphibians</h3><p>Frogs, Toads, Salamanders...</p></div>
-            <div class="species-card"><h3>Invertebrates</h3><p>Insects, Spiders, Jellyfish...</p></div>
+            <div class="species-card"><h3>Mamíferos</h3><p>Cães, Gatos, Ursos...</p></div>
+            <div class="species-card"><h3>Aves</h3><p>Águias, Papagaios, Corujas...</p></div>
+            <div class="species-card"><h3>Répteis</h3><p>Cobras, Lagartos, Tartarugas...</p></div>
+            <div class="species-card"><h3>Peixes</h3><p>Tubarões, Peixes-Dourados, Salmões...</p></div>
+            <div class="species-card"><h3>Anfíbios</h3><p>Sapos, Cobras-Cegas, Salamandras...</p></div>
+            <div class="species-card"><h3>Invertebrados</h3><p>Insetos, Aranhas, Águas-Vivas...</p></div>
         </div>
     </div>
 </div>
 
 <!-- Dashboard e Atividade -->
 <div id="dashboardPage" class="page">
+    <div class="header">
+        <h1>Animal Explorer</h1>
+        <br>
+        <button class="nav-button" onclick="showDashboardToMain()">← Voltar</button>
+    </div>
     <div style="text-align:center;">
         <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
             <rect width="1000" height="700" fill="#f5f5f5"/>
             <rect x="0" y="0" width="1000" height="80" fill="#000"/>
             <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Dashboard</text>
-            <rect id="backRectDashboard" class="dashboard-panel" x="800" y="25" width="150" height="35" fill="#fff" rx="2"/>
-            <text id="backTextDashboard" x="875" y="48" font-family="Arial" font-size="14" font-weight="600" text-anchor="middle" fill="#000">← Back to Main</text>
         </svg>
     </div>
 </div>
 
 <!-- Página de Atividade -->
 <div id="activityPage" class="page">
+    <div class="header">
+        <h1>Animal Explorer</h1>
+        <br>
+        <button class="nav-button" onclick="showActivityToMain()">← Voltar</button>
+    </div>
     <div style="text-align:center;">
         <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background -->
+            <!-- Fundo -->
             <rect width="1000" height="700" fill="#f5f5f5"/>
             
             <!-- Header -->
             <rect x="0" y="0" width="1000" height="80" fill="#000"/>
             <text x="50" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">Atividade</text>
 
-            <!-- Botão Voltar -->
-            <rect id="backRectActivity" class="activity-panel" x="820" y="25" width="130" height="35" fill="#ffffff" rx="2"/>
-            <text id="backTextActivity" x="885" y="48" font-family="Arial" font-size="14" font-weight="600" text-anchor="middle" fill="#000">← Voltar</text>
-
-            <!-- Main Panel -->
+            <!-- Painel Principal -->
             <rect x="50" y="120" width="900" height="530" class="activity-panel"/>
             <text x="500" y="170" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle" fill="#000">Atividade</text>
-            <text x="500" y="195" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">Numero de logins por dia</text>
+            <text x="500" y="195" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">Número de Logins por dia</text>
 
-            <!-- Graph Area -->
+            <!-- Área do Gráfico -->
             <rect x="100" y="240" width="800" height="350" class="graph-area"/>
 
-            <!-- Grid Lines -->
+            <!-- Linhas de Grelha -->
             <line x1="100" y1="520" x2="900" y2="520" class="grid-line"/>
             <line x1="100" y1="450" x2="900" y2="450" class="grid-line"/>
             <line x1="100" y1="380" x2="900" y2="380" class="grid-line"/>
             <line x1="100" y1="310" x2="900" y2="310" class="grid-line"/>
             <line x1="100" y1="240" x2="900" y2="240" class="grid-line"/>
 
-            <!-- Y-Axis Labels -->
+            <!-- Etiquetas do Eixo Y -->
             <text x="85" y="525" class="y-label">0</text>
             <text x="85" y="455" class="y-label">2</text>
             <text x="85" y="385" class="y-label">4</text>
             <text x="85" y="315" class="y-label">6</text>
             <text x="85" y="245" class="y-label">8</text>
 
-            <!-- Data Line -->
+            <!-- Linhas de Dados -->
             <polyline class="data-line" points="150,485 250,450 350,380 450,415 550,345 650,310 750,380 850,450"/>
 
-            <!-- Data Points -->
+            <!-- Pontos de Dados -->
             <circle class="data-point" cx="150" cy="485" r="5"/>
             <circle class="data-point" cx="250" cy="450" r="5"/>
             <circle class="data-point" cx="350" cy="380" r="5"/>
@@ -139,7 +144,7 @@
             <circle class="data-point" cx="750" cy="380" r="5"/>
             <circle class="data-point" cx="850" cy="450" r="5"/>
 
-            <!-- X-Axis Labels -->
+            <!-- Etiquetas do eixo X -->
             <text x="150" y="610" class="x-label">Mon</text>
             <text x="250" y="610" class="x-label">Tue</text>
             <text x="350" y="610" class="x-label">Wed</text>
@@ -149,7 +154,7 @@
             <text x="750" y="610" class="x-label">Sun</text>
             <text x="850" y="610" class="x-label">Mon</text>
 
-            <!-- Axes -->
+            <!-- Eixos -->
             <line x1="100" y1="240" x2="100" y2="520" class="axis"/>
             <line x1="100" y1="520" x2="900" y2="520" class="axis"/>
         </svg>

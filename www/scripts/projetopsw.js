@@ -1,8 +1,6 @@
 "use strict";
 
-/**
- * Funções de navegação para aceder ao registo e ao login, respetivamente.
- */
+// Funções de navegação para aceder de uma página para outra.
 window.showLoginToSignup = () => {
     document.getElementById("loginPage").classList.remove("active");
     document.getElementById("signupPage").classList.add("active");
@@ -18,7 +16,32 @@ window.showLoginToMain = () => {
     document.getElementById("mainPage").classList.add("active");
 }
 
-// Handle Sign Up
+window.showMainToLogin = () => {
+    document.getElementById("mainPage").classList.remove("active");
+    document.getElementById("loginPage").classList.add("active");
+};
+
+window.showMainToDashboard = () => {
+    document.getElementById("mainPage").classList.remove("active");
+    document.getElementById("dashboardPage").classList.add("active");
+}
+
+window.showDashboardToMain = () => {
+    document.getElementById("dashboardPage").classList.remove("active");
+    document.getElementById("mainPage").classList.add("active");
+}
+
+window.showMainToActivity = () => {
+    document.getElementById("mainPage").classList.remove("active");
+    document.getElementById("activityPage").classList.add("active");
+}
+
+window.showActivityToMain = () => {
+    document.getElementById("activityPage").classList.remove("active");
+    document.getElementById("mainPage").classList.add("active");
+}
+
+// Registo
 window.handleSignup = (event) => {
     event.preventDefault();
     var name = document.getElementById("signupName").value;
@@ -43,7 +66,7 @@ window.handleSignup = (event) => {
     xhr.send(JSON.stringify({ name: name, email: email, password: password }));
 }
 
-// Handle Login
+// Login
 window.handleLogin = (event) => {
     event.preventDefault();
     var email = document.getElementById("loginEmail").value;
@@ -58,11 +81,50 @@ window.handleLogin = (event) => {
         } else if (xhr.readyState === 4 && xhr.status === 401) {
             alert("Dados inseridos incorretamente.");
         } else if (xhr.readyState === 4) {
-            alert("Erro no registo: " + xhr.responseText);
+            alert("Erro no login: " + xhr.responseText);
         }
     };
     xhr.send(JSON.stringify({ email: email, password: password }));
 }
+
+// Logout
+window.handleLogout = () => {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/logout", true); 
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            alert("Logout bem-sucedido.");
+            window.showMainToLogin();
+        } else if (xhr.readyState === 4) {
+            alert("Erro no logout: " + xhr.responseText);
+        }
+    };
+    xhr.send(); 
+};
+
+// Verificar sessão existente
+window.loginStatus = () => {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/check-session", true); 
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) { // Se existir uma sessão ativa
+                const response = JSON.parse(xhr.responseText);
+                console.log(`Bem-vindo de volta, ${response.user.user_name}`);
+                alert("Bem-vindo de volta.")
+                window.showLoginToMain(); 
+            } else if (xhr.status === 401) { // Se não existir uma sessão ativa
+                console.log("Sem sessão, a mostrar ecrã de login.");
+                window.showMainToLogin();
+            } else { // Caso exista alguma falha
+                console.error("Erro ao verificar sessão: " + xhr.responseText);
+                window.showMainToLogin(); // Redireciona diretamente para o login.
+            }
+        }
+    };
+    xhr.send();
+};
+
 
 /**
  * Será executada quando a página for carregada, criando a variável "info" e um objeto Information.
@@ -70,79 +132,32 @@ window.handleLogin = (event) => {
  * @memberof window
  * @params {Event} event - objeto que representará o evento
  */
+
+/*
 window.onload = (event) => {
     var info = new Information("divInformation");
     info.getUser();
     info.getAnimal();
     info.getLogs();
     window.info = info;
-/*
-
-// Mostrar Dashboard
-    showDashboard = () => {
-        document.getElementById("headerTitle").textContent="Dashboard";
-        //clearChart(); - Se usar gráficos.
-        replaceChilds(this.id,document.createElement("div"));
-        togglePage('dashboardPage');
-    };
-
-// Mostrar Atividade
-    showActivity = () => {
-        document.getElementById("headerTitle").textContent="Atividade";
-        //clearChart(); - Se usar gráficos.
-        replaceChilds(this.id,document.createElement("div"));
-        togglePage('activityPage');
-    };
-
-// Voltar ao Main
-function goToMain() { 
-    togglePage('mainPage'); 
-    document.body.classList.add('main-page'); 
-}
-
-// Mostrar Registo
-function togglePage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-// Validação
-function validateEmail(email) { 
-    return email.endsWith('@gmail.com'); 
-}
-
-// Registo
-function handleSignup(e) {
-    e.preventDefault();
-    const email = signupEmail.value.trim();
-    const password = signupPassword.value.trim();
-    const confirm = signupConfirm.value.trim();
-    if (!validateEmail(email)) return alert('Email must be @gmail.com');
-    if (password !== confirm) return alert('Passwords do not match');
-    if (localStorage.getItem('user_' + email)) return alert('User exists!');
-    localStorage.setItem('user_' + email, JSON.stringify({ email, password }));
-    alert('Signup successful!');
-    showLogin();
-}
-
-// Login
-function handleLogin(e) {
-    e.preventDefault();
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value.trim();
-    const stored = JSON.parse(localStorage.getItem('user_' + email));
-    if (!stored || stored.password !== password) return alert('Invalid login!');
-    goToMain();
-}
-
-// Botão Login
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('backRectDashboard').addEventListener('click', goToMain);
-    document.getElementById('backTextDashboard').addEventListener('click', goToMain);
-    document.getElementById('backRectActivity').addEventListener('click', goToMain);
-    document.getElementById('backTextActivity').addEventListener('click', goToMain);
-});
-
+    window.loginStatus();
+};
 */
 
-};
+/** 
+* @class Guarda toda informação necessaria na execução do exercicio 
+* @constructs Informacao
+* @param {string} id - id do elemento HTML que contém a informação.
+* 
+* @property {string} id - id do elemento HTML que contém a informação.
+* @property {sensor[]} sensors - Array de objetos do tipo Sensor, para guardar todos os users do nosso sistema
+*/
+
+/*
+class Information {
+    constructor(id) {
+        this.id = id;
+        this.user=[];
+    }
+}
+*/
