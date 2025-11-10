@@ -4,177 +4,177 @@
 // Funções de navegação
 // =========================
 function showPage(pageId) {
-	document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-	const page = document.getElementById(pageId);
-	if (page) page.classList.add('active');
+	document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); // Remove classe active de todas as páginas.
+	const page = document.getElementById(pageId); // Obtém o elemento da página para mostrar.
+	if (page) page.classList.add('active'); // Adiciona classe active à página selecionada.
 }
 
-window.showToSignup = () => showPage("signupPage");
-window.showToLogin = () => showPage("loginPage");
-window.showToMain = () => showPage("mainPage");
+window.showToSignup = () => showPage("signupPage"); // Atalho para mostrar página de registo.
+window.showToLogin = () => showPage("loginPage"); // Atalho para mostrar página de login.
+window.showToMain = () => showPage("mainPage"); // Atalho para mostrar página principal.
 window.showToDashboard = () => {
-	showPage("dashboardPage");	
-	window.handleRead();
+	showPage("dashboardPage");	// Mostra a página da dashboard.
+	window.handleRead(); // Atualiza e lê os dados do utilizador quando mostra a dashboard.
 };
 
 // =========================
 // Criação de Conta (Registo)
 // =========================
 window.handleSignup = (event) => {
-	event.preventDefault();
-	const name = document.getElementById("signupName").value;
-	const email = document.getElementById("signupEmail").value;
-	const password = document.getElementById("signupPassword").value;
-	const confirm = document.getElementById("signupConfirm").value;
-	if (password !== confirm) {
-		alert("As palavras-passes não combinam.");
-		return;
+	event.preventDefault(); // Previne o comportamento padrão do form (recarregar a página).
+	const name = document.getElementById("signupName").value; // Obtém o nome do input.
+	const email = document.getElementById("signupEmail").value; // Obtém o email do input.
+	const password = document.getElementById("signupPassword").value; // Obtém a password do input.
+	const confirm = document.getElementById("signupConfirm").value; // Obtém a confirmação de password.
+	if (password !== confirm) { // Verifica se passwords coincidem.
+		alert("As palavras-passes não combinam."); // Alerta o utilizador caso as passwords não coincidam.
+		return; // Sai da função sem enviar pedido.
 	}
-	const xhr = new XMLHttpRequest();
-	xhr.open("POST", "/signup", true);
-	xhr.setRequestHeader("Content-Type", "application/json");
+	const xhr = new XMLHttpRequest(); // Cria um novo XMLHttpRequest.
+	xhr.open("POST", "/signup", true); // Configura o pedido POST para /signup de forma assíncrona.
+	xhr.setRequestHeader("Content-Type", "application/json"); // Define o header indicando JSON no corpo.
 	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			alert("Registo bem-sucedido.");
-			window.showToLogin();
+		if (xhr.readyState === 4 && xhr.status === 200) { // Verifica se pedido terminou com sucesso.
+			alert("Registo bem-sucedido."); // Informa o utilizador.
+			window.showToLogin(); // Redireciona para a página de login.
 		} else if (xhr.readyState === 4) {
-			alert("Erro no registo: " + xhr.responseText);
+			alert("Erro no registo: " + xhr.responseText); // Mostra erro retornado pelo servidor.
 		}
 	};
-	xhr.send(JSON.stringify({ name: name, email: email, password: password }));
+	xhr.send(JSON.stringify({ name: name, email: email, password: password })); // Envia o corpo em JSON com os dados do registo.
 };
 
 // =========================
 // Início de Sessão (Login)
 // =========================
 window.handleLogin = (event) => {
-	event.preventDefault();
-	const email = document.getElementById("loginEmail").value;
-	const password = document.getElementById("loginPassword").value;
-	const xhr = new XMLHttpRequest();
-	xhr.open("POST", "/login", true);
-	xhr.setRequestHeader("Content-Type", "application/json");
+	event.preventDefault(); // Previne reload de página no submit do form.
+	const email = document.getElementById("loginEmail").value; // Lê email do input.
+	const password = document.getElementById("loginPassword").value; // Lê password do input.
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para login.
+	xhr.open("POST", "/login", true); // Abre pedido POST para /login.
+	xhr.setRequestHeader("Content-Type", "application/json"); // Define cabeçalho JSON.
 	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			alert("Login bem-sucedido.");
-			window.showToMain();
+		if (xhr.readyState === 4 && xhr.status === 200) { // Se login bem-sucedido.
+			alert("Login bem-sucedido."); // Informa o utilizador.
+			window.showToMain(); // Mostra a página principal.
 		} else if (xhr.readyState === 4 && xhr.status === 401) {
-			alert("Dados inseridos incorretamente.");
+			alert("Dados inseridos incorretamente."); // Mensagem para credenciais inválidas.
 		} else if (xhr.readyState === 4) {
-			alert("Erro no login: " + xhr.responseText);
+			alert("Erro no login: " + xhr.responseText); // Mensagem para outros erros.
 		}
 	};
-	xhr.send(JSON.stringify({ email: email, password: password }));
+	xhr.send(JSON.stringify({ email: email, password: password })); // Envia email e password em JSON.
 };
 
 // =========================
 // Término de Sessão (Logout)
 // =========================
 window.handleLogout = () => {
-	const xhr = new XMLHttpRequest();
-	xhr.open("POST", "/logout", true);
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para logout.
+	xhr.open("POST", "/logout", true); // Abre pedido POST para /logout.
 	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			alert("Logout bem-sucedido.");
-			if (document.getElementById("dashboardPage")) {
-				window.showToLogin();
+		if (xhr.readyState === 4 && xhr.status === 200) { // Se logout bem-sucedido.
+			alert("Logout bem-sucedido."); // Informa o utilizador.
+			if (document.getElementById("dashboardPage")) { // Se existir dashboard na página atual.
+				window.showToLogin(); // Mostra a página de login.
 			}
-			if (document.getElementById("mainPage")) {
-				window.showToLogin();
+			if (document.getElementById("mainPage")) { // Se existir mainPage.
+				window.showToLogin(); // Mostra a página de login.
 			}
 		} else if (xhr.readyState === 4) {
-			alert("Erro no logout: " + xhr.responseText);
+			alert("Erro no logout: " + xhr.responseText); // Mensagem em caso de erro.
 		}
 	};
-	xhr.send();
+	xhr.send(); // Envia pedido sem corpo.
 };
 
 // =========================
 // Ler os dados da conta do utilizador
 // =========================
 window.handleRead = () => {
-	const dashboardElem = document.getElementById("dashboardPage");
-	if (!dashboardElem) return;
+	const dashboardElem = document.getElementById("dashboardPage"); // Obtém elemento da dashboard.
+	if (!dashboardElem) return; // Sai se a dashboard não existir na página.
 
-	const xhr = new XMLHttpRequest();
-	xhr.withCredentials = true;
-	xhr.open("GET", "/user", true);
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para obter dados do utilizador.
+	xhr.withCredentials = true; // Incluir cookies de sessão no pedido.
+	xhr.open("GET", "/user", true); // Abre pedido GET para /user.
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
-				const resp = JSON.parse(xhr.responseText);
-				const user = resp.user;
-				const nameElem = document.getElementById("userName");
-				const emailElem = document.getElementById("userEmail");
-				if (nameElem && user.user_name) nameElem.textContent = user.user_name;
-				if (emailElem && user.user_email) emailElem.textContent = user.user_email;
+				const resp = JSON.parse(xhr.responseText); // Faz parse do JSON de resposta.
+				const user = resp.user; // Extrai objecto user da resposta.
+				const nameElem = document.getElementById("userName"); // Elemento para mostrar nome.
+				const emailElem = document.getElementById("userEmail"); // Elemento para mostrar email.
+				if (nameElem && user.user_name) nameElem.textContent = user.user_name; // Atualiza nome na UI.
+				if (emailElem && user.user_email) emailElem.textContent = user.user_email; // Atualiza email na UI.
 			} else {
-				alert("Erro ao obter dados do utilizador: " + xhr.responseText);
+				alert("Erro ao obter dados do utilizador: " + xhr.responseText); // Alerta em caso de erro.
 			}
 		}
 	};
-	xhr.send();
+	xhr.send(); // Envia pedido.
 };
 
 // =========================
 // Atualizar os dados da conta do utilizador
 // =========================
 window.handleUpdate = () => {
-	const name = document.getElementById("updateName").value.trim();
-	const email = document.getElementById("updateEmail").value.trim();
-	const newPasswordValue = document.getElementById("updatePassword").value.trim();
+	const name = document.getElementById("updateName").value.trim(); // Lê e limpa o nome do input.
+	const email = document.getElementById("updateEmail").value.trim(); // Lê e limpa o email do input.
+	const newPasswordValue = document.getElementById("updatePassword").value.trim(); // Lê e limpa nova password.
 
-	const body = {};
-	if (name) body.name = name;
-	if (email) body.email = email;
-	if (newPasswordValue) body.newPassword = newPasswordValue;
+	const body = {}; // Objecto para construir o corpo do pedido.
+	if (name) body.name = name; // Adiciona nome se fornecido.
+	if (email) body.email = email; // Adiciona email se fornecido.
+	if (newPasswordValue) body.newPassword = newPasswordValue; // Adiciona nova password se fornecida.
 
-	console.log("Objeto Body antes de enviar:", body);
+	console.log("Objeto Body antes de enviar:", body); // Log para debugging do corpo que será enviado.
 
-	if (Object.keys(body).length === 0) {
-		alert("Preencha pelo menos um campo (Nome, Email ou Password) para atualizar.");
-		return;
+	if (Object.keys(body).length === 0) { // Verifica se há algum campo para atualizar.
+		alert("Preencha pelo menos um campo (Nome, Email ou Password) para atualizar."); // Alerta se nenhum campo foi preenchido.
+		return; // Sai sem enviar pedido.
 	}
 
-	const xhr = new XMLHttpRequest();
-	xhr.withCredentials = true;
-	xhr.open("PUT", "/user", true);
-	xhr.setRequestHeader("Content-Type", "application/json");
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para update.
+	xhr.withCredentials = true; // Inclui cookies de sessão no pedido.
+	xhr.open("PUT", "/user", true); // Abre pedido PUT para /user.
+	xhr.setRequestHeader("Content-Type", "application/json"); // Define cabeçalho JSON.
 
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState === 4) {
-			let resp = { Message: "Resposta desconhecida do servidor." };
+			let resp = { Message: "Resposta desconhecida do servidor." }; // Padrão caso não seja JSON.
 			try {
-				resp = JSON.parse(xhr.responseText);
+				resp = JSON.parse(xhr.responseText); // Tenta parsear a resposta.
 			} catch (e) {
-				// ignora
+				// ignora parse errors e usa a mensagem padrão.
 			}
 
 			if (xhr.status === 200) {
-				alert(resp.Message || "Dados atualizados com sucesso.");
-				toggleUpdateForm(false);
-				window.handleRead();
+				alert(resp.Message || "Dados atualizados com sucesso."); // Alerta de sucesso com mensagem do servidor.
+				toggleUpdateForm(false); // Fecha o formulário de atualização.
+				window.handleRead(); // Recarrega os dados do utilizador.
 			} else {
-				alert("Erro ao atualizar dados: " + (resp.Message || `Erro de rede/servidor (${xhr.status}).`));
+				alert("Erro ao atualizar dados: " + (resp.Message || `Erro de rede/servidor (${xhr.status}).`)); // Mostra erro detalhado.
 			}
 		}
 	};
-	xhr.send(JSON.stringify(body));
+	xhr.send(JSON.stringify(body)); // Envia corpo em JSON com os campos a atualizar.
 };
 
-document.addEventListener('DOMContentLoaded', window.handleRead);
+document.addEventListener('DOMContentLoaded', window.handleRead); // Lança handleRead quando o DOM está carregado.
 
 // =========================
 // Mostrar e esconder o formulário de atualização dos dados da conta do utilizador
 // =========================
 window.toggleUpdateForm = (show) => {
-	const form = document.getElementById("updateForm");
+	const form = document.getElementById("updateForm"); // Obtém o formulário de update.
 	if (form) {
-		form.style.display = show ? 'block' : 'none';
+		form.style.display = show ? 'block' : 'none'; // Ajusta display conforme parametro.
 		if (!show) {
-			document.getElementById("updateName").value = '';
-			document.getElementById("updateEmail").value = '';
-			document.getElementById("updatePassword").value = '';
+			document.getElementById("updateName").value = ''; // Limpa campo nome quando esconde.
+			document.getElementById("updateEmail").value = ''; // Limpa campo email quando esconde.
+			document.getElementById("updatePassword").value = ''; // Limpa campo password quando esconde.
 		}
 	}
 }
@@ -183,56 +183,56 @@ window.toggleUpdateForm = (show) => {
 // Eliminação da conta do utilizador
 // =========================
 window.handleDelete = () => {
-	const confirmDelete = confirm("Tem a certeza de que deseja eliminar a conta?");
-	if (!confirmDelete) return;
-	const email = prompt("Introduza o seu email:")
-	const password = prompt("Introduza a sua password para confirmar a eliminação da conta:");
+	const confirmDelete = confirm("Tem a certeza de que deseja eliminar a conta?"); // Pergunta de confirmação padrão do browser.
+	if (!confirmDelete) return; // Sai se não confirmado.
+	const email = prompt("Introduza o seu email:") // Solicita email via prompt para confirmar identidade.
+	const password = prompt("Introduza a sua password para confirmar a eliminação da conta:"); // Solicita password via prompt.
 	if (!email || !password) {
-		alert("Email e password obrigatórias para eliminar a conta.");
-		return;
+		alert("Email e password obrigatórias para eliminar a conta."); // Alerta se faltar dados.
+		return; // Sai sem enviar pedido.
 	}
-	const xhr = new XMLHttpRequest();
-	xhr.open("DELETE", "/delete", true);
-	xhr.setRequestHeader("Content-Type", "application/json");
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para delete.
+	xhr.open("DELETE", "/delete", true); // Abre pedido DELETE para /delete.
+	xhr.setRequestHeader("Content-Type", "application/json"); // Define cabeçalho JSON.
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
-				alert("Conta eliminada com sucesso.");
-				window.showToLogin();
+				alert("Conta eliminada com sucesso."); // Alerta de sucesso.
+				window.showToLogin(); // Redireciona para login.
 			} else {
-				alert("Erro a apagar a conta: " + xhr.responseText);
+				alert("Erro a apagar a conta: " + xhr.responseText); // Mensagem de erro vinda do servidor.
 			}
 		}
 	};
-	xhr.send(JSON.stringify({ confirmDelete: true, email: email, password: password }));
+	xhr.send(JSON.stringify({ confirmDelete: true, email: email, password: password })); // Envia confirmação, email e password em JSON.
 };
 
 // =========================
 // Verificar sessões existentes
 // =========================
 window.loginStatus = () => {
-	const xhr = new XMLHttpRequest();
-	xhr.open("GET", "/check-session", true);
+	const xhr = new XMLHttpRequest(); // Cria XMLHttpRequest para check-session.
+	xhr.open("GET", "/check-session", true); // Abre pedido GET para /check-session.
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4) {
 			try {
-				const resp = JSON.parse(xhr.responseText);
-				if (xhr.status === 200 && resp.sessionActive) {
+				const resp = JSON.parse(xhr.responseText); // Tenta parsear resposta.
+				if (xhr.status === 200 && resp.sessionActive) { // Verifica campo sessionActive na resposta.
 					alert("Bem-vindo de volta.")
-					window.showToMain();
+					window.showToMain(); // Se sessão ativa, mostra main.
 				} else if (xhr.status === 401) {
-					window.showToLogin();
+					window.showToLogin(); // Se não autorizado, mostra login.
 				} else {
-					console.error("Erro ao verificar sessão: " + xhr.responseText);
-					window.showToLogin();
+					console.error("Erro ao verificar sessão: " + xhr.responseText); // Log de erro para debugging.
+					window.showToLogin(); // Mostra login por segurança.
 				}
 			} catch (e) {
-				console.error("Erro ao parsear resposta:", e);
-				window.showToLogin();
+				console.error("Erro ao parsear resposta:", e); // Log de erro de parse.
+				window.showToLogin(); // Mostra login se não conseguiu parsear a resposta.
 			}
 		}
 	};
-	xhr.send();
+	xhr.send(); // Envia pedido.
 };
 
 // =========================
@@ -241,12 +241,12 @@ window.loginStatus = () => {
 const SPECIES_DATA = {
 	'Mamíferos': [
 		{
-			name: 'Leão',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/400px-Lion_waiting_in_Namibia.jpg',
-			population: '~20.000',
-			status: 'Vulnerável',
-			statusClass: 'status-endangered',
-			description: 'O leão é um grande felino do género Panthera, nativo de África e da Índia. Conhecido como "rei da selva", vive em grupos familiares chamados alcateias.'
+			name: 'Leão', // Nome da espécie.
+			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/400px-Lion_waiting_in_Namibia.jpg', // URL da imagem.
+			population: '~20.000', // Indicação de população.
+			status: 'Vulnerável', // Estado de conservação.
+			statusClass: 'status-endangered', // Classe CSS para estado.
+			description: 'O leão é um grande felino do género Panthera, nativo de África e da Índia. Conhecido como "rei da selva", vive em grupos familiares chamados alcateias.' // Descrição.
 		},
 		{
 			name: 'Elefante',
@@ -360,50 +360,50 @@ const SPECIES_DATA = {
 // =========================
 // Detalhes da espécie
 // =========================
-let currentSpecies = '';
+let currentSpecies = ''; // Guarda a espécie atual seleccionada.
 
 function showSpeciesDetail(species) {
-	currentSpecies = species;
+	currentSpecies = species; // Define a espécie actual.
 
-	const headerTitle = document.getElementById('speciesHeaderTitle');
-	const contentTitle = document.getElementById('speciesContentTitle');
-	const grid = document.getElementById('animalGrid');
+	const headerTitle = document.getElementById('speciesHeaderTitle'); // Elemento do cabeçalho da secção.
+	const contentTitle = document.getElementById('speciesContentTitle'); // Elemento do título do conteúdo.
+	const grid = document.getElementById('animalGrid'); // Elemento onde serão inseridos os cards.
 
-	headerTitle.textContent = species;
-	contentTitle.textContent = species;
-	grid.innerHTML = '';
+	headerTitle.textContent = species; // Atualiza título do cabeçalho.
+	contentTitle.textContent = species; // Atualiza título do conteúdo.
+	grid.innerHTML = ''; // Limpa o grid antes de povoar.
 
-	const animals = SPECIES_DATA[species] || [];
+	const animals = SPECIES_DATA[species] || []; // Obtém array de animais para a espécie ou array vazio.
 
 	animals.forEach(animal => {
-		const card = document.createElement('div');
-		card.className = 'animal-card';
-		card.onclick = () => showAnimalProfile(animal);
+		const card = document.createElement('div'); // Cria um elemento div para card.
+		card.className = 'animal-card'; // Atribui classe CSS ao card.
+		card.onclick = () => showAnimalProfile(animal); // Define onclick para mostrar perfil do animal.
 		card.innerHTML = `
-			<div class="animal-image" style="background-image: url('${animal.img}');"></div>
-			<div class="animal-name">${animal.name}</div>
-		`;
-		grid.appendChild(card);
+				<div class="animal-image" style="background-image: url('${animal.img}');"></div>
+				<div class="animal-name">${animal.name}</div>
+			`;
+		grid.appendChild(card); // Adiciona o card ao grid.
 	});
 
-	showPage('speciesDetailPage');
+	showPage('speciesDetailPage'); // Mostra a página de detalhe da espécie.
 }
 
 // =========================
 // Perfil do animal
 // =========================
 function showAnimalProfile(animal) {
-	if (!animal) return;
+	if (!animal) return; // Retorna se não foi passado objecto animal.
 
-	document.getElementById('animalProfileTitle').textContent = animal.name;
-	document.getElementById('animalProfileImage').src = animal.img;
-	document.getElementById('animalPopulation').textContent = animal.population || 'Unknown';
+	document.getElementById('animalProfileTitle').textContent = animal.name; // Define título do perfil com o nome do animal.
+	document.getElementById('animalProfileImage').src = animal.img; // Define src da imagem do perfil.
+	document.getElementById('animalPopulation').textContent = animal.population || 'Unknown'; // Mostra população ou 'Unknown' se ausente.
 
-	const statusEl = document.getElementById('animalStatus');
-	statusEl.textContent = animal.status || 'Unknown';
-	statusEl.className = `animal-value ${animal.statusClass || ''}`;
+	const statusEl = document.getElementById('animalStatus'); // Elemento que mostra o estado de conservação.
+	statusEl.textContent = animal.status || 'Unknown'; // Define texto do estado.
+	statusEl.className = `animal-value ${animal.statusClass || ''}`; // Define classes CSS para estilo do estado.
 
-	document.getElementById('animalDescription').textContent = animal.description || 'No description available.';
+	document.getElementById('animalDescription').textContent = animal.description || 'No description available.'; // Define descrição do animal.
 
-	showPage('animalProfilePage');
+	showPage('animalProfilePage'); // Mostra a página de perfil do animal.
 }
