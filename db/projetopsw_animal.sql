@@ -25,9 +25,13 @@ DROP TABLE IF EXISTS `animal`;
 CREATE TABLE `animal` (
   `animal_id` int NOT NULL AUTO_INCREMENT,
   `animal_name` varchar(50) NOT NULL COMMENT 'Nome da Espécie (ex: Gato - Felis Catus)',
-  `animal_population` int NOT NULL,
-  `animal_habitat` varchar(40) NOT NULL,
-  `animal_category` varchar(25) NOT NULL COMMENT 'Estado de conservação (EX, EW, CR, EN, VU, NT, LC)',
+  `animal_population` varchar(50) DEFAULT NULL,
+  `animal_status` varchar(50) NOT NULL COMMENT 'Estado de conservação (EX, EW, CR, EN, VU, NT, LC)',
+  `animal_status_class` varchar(50) NOT NULL,
+  `animal_description` text NOT NULL,
+  `animal_image_url` text NOT NULL,
+  `animal_habitat` varchar(100) NOT NULL,
+  `animal_category` varchar(50) NOT NULL COMMENT 'Espécie (Mamíferos, Répteis, Aves, etc.)',
   PRIMARY KEY (`animal_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -50,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-28 15:58:02
+-- Dump completed on 2025-11-10 19:27:54

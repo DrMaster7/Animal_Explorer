@@ -1,190 +1,176 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Animal Explorer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="styles/animalexplorer.css" />
-    <script src="scripts/animalexplorer.js" defer></script>
+	<meta charset="utf-8" />
+	<title>Animal Explorer</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/animalexplorer.css" />
+	<script src="scripts/animalexplorer.js" defer></script>
 </head>
+
 <body onload="window.loginStatus()">
 
 <!-- Login -->
 <div id="loginPage" class="page active">
-    <div class="container">
-        <h2>Log In</h2>
-        <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="Email" required />
-            </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Palavra-Passe" required />
-            </div>
-            <button type="submit">Log In</button>
-        </form>
-        <div class="footer-text">
-            Não tem uma conta? <a onclick="showToSignup()">Registe-se</a>
-        </div>
-    </div>
+	<div class="container">
+		<h2>Log In</h2>
+		<form onsubmit="handleLogin(event)">
+			<div class="form-group">
+				<input type="email" id="loginEmail" placeholder="Email" required />
+			</div>
+			<div class="form-group">
+				<input type="password" id="loginPassword" placeholder="Palavra-Passe" required />
+			</div>
+			<button type="submit">Log In</button>
+		</form>
+		<div class="footer-text">
+			Não tem uma conta? <a onclick="showToSignup()">Registe-se</a>
+		</div>
+	</div>
 </div>
 
 <!-- Registo -->
 <div id="signupPage" class="page">
-    <div class="container">
-        <h2>Registo</h2>
-        <form onsubmit="handleSignup(event)">
-            <div class="form-group">
-                <input type="name" id="signupName" placeholder="Nome" required />
-            </div>
-            <div class="form-group">
-                <input type="email" id="signupEmail" placeholder="Email" required />
-            </div>
-            <div class="form-group">
-                <input type="password" id="signupPassword" placeholder="Palavra-Passe" required />
-            </div>
-            <div class="form-group">
-                <input type="password" id="signupConfirm" placeholder="Confirmar Palavra-Passe" required />
-            </div>
-            <button type="submit">Registar</button>
-        </form>
-        <div class="footer-text">
-            Já tem uma conta? <a onclick="showToLogin()">Log In</a>
-        </div>
-    </div>
+	<div class="container">
+		<h2>Registo</h2>
+		<form onsubmit="handleSignup(event)">
+			<div class="form-group">
+				<input type="name" id="signupName" placeholder="Nome" required />
+			</div>
+			<div class="form-group">
+				<input type="email" id="signupEmail" placeholder="Email" required />
+			</div>
+			<div class="form-group">
+				<input type="password" id="signupPassword" placeholder="Palavra-Passe" required />
+			</div>
+			<div class="form-group">
+				<input type="password" id="signupConfirm" placeholder="Confirmar Palavra-Passe" required />
+			</div>
+			<button type="submit">Registar</button>
+		</form>
+		<div class="footer-text">
+			Já tem uma conta? <a onclick="showToLogin()">Log In</a>
+		</div>
+	</div>
 </div>
 
 <!-- Página Inicial -->
 <div id="mainPage" class="page">
-    <div class="header">
-        <h1>Animal Explorer</h1>
-        <div class="nav-buttons">
-            <button class="nav-button" onclick="showToDashboard()">Dashboard</button>
-            <button class="nav-button" onclick="handleLogout()">Terminar Sessão</button>
-        </div>
-    </div>
-    <div class="main-content">
-    <h2 class="page-title">Escolha uma espécie:</h2>
-    <div class="species-grid">
-      <div class="species-card" onclick="showSpeciesDetail('Mamiferos')"><h3>Mamiferos</h3></div>
-      <div class="species-card" onclick="showSpeciesDetail('Aves')"><h3>Aves</h3></div>
-      <div class="species-card" onclick="showSpeciesDetail('Repteis')"><h3>Répteis</h3></div>
-      <div class="species-card" onclick="showSpeciesDetail('Anfibios')"><h3>Anfíbios</h3></div>
-      <div class="species-card" onclick="showSpeciesDetail('Peixes')"><h3>Peixes</h3></div>
-      <div class="species-card" onclick="showSpeciesDetail('Insetos')"><h3>Insetos</h3></div>
-    </div>
-    </div>
-  </div>
+	<div class="header">
+		<h1>Animal Explorer</h1>
+		<div class="nav-buttons">
+			<button class="nav-button" onclick="showToDashboard()">Dashboard</button>
+			<button class="nav-button" onclick="handleLogout()">Terminar Sessão</button>
+		</div>
+	</div>
+	<div class="main-content">
+		<h2 class="page-title">Escolha uma espécie:</h2>
+		<div class="species-grid">
+			<div class="species-card" onclick="showSpeciesDetail('Mamíferos')"><h3>Mamíferos</h3></div>
+			<div class="species-card" onclick="showSpeciesDetail('Aves')"><h3>Aves</h3></div>
+			<div class="species-card" onclick="showSpeciesDetail('Répteis')"><h3>Répteis</h3></div>
+			<div class="species-card" onclick="showSpeciesDetail('Anfíbios')"><h3>Anfíbios</h3></div>
+			<div class="species-card" onclick="showSpeciesDetail('Peixes')"><h3>Peixes</h3></div>
+			<div class="species-card" onclick="showSpeciesDetail('Insetos')"><h3>Insetos</h3></div>
+		</div>
+	</div>
 </div>
 
-<!-- Pagina de detalhes especies -->
+<!-- Página de detalhes espécies -->
 <div id="speciesDetailPage" class="page">
-  <div class="content-wrapper">
-    <div class="species-detail-header">
-      <h1 id="speciesHeaderTitle">Mamíferos</h1>
-      <div class="species-detail-nav">
-        <button class="species-detail-button" onclick="showToMain()">Voltar</button>
-      </div>
-    </div>
-
-    <div class="species-detail-content">
-      <h2 class="species-detail-title" id="speciesContentTitle">Mamíferos</h2>
-      <div class="animal-grid" id="animalGrid">
-        <!-- Cards injected by JS -->
-      </div>
-    </div>
-  </div>
+	<div class="content-wrapper">
+		<div class="species-detail-header">
+			<h1 id="speciesHeaderTitle">Mamíferos</h1>
+			<div class="species-detail-nav">
+				<button class="species-detail-button" onclick="showToMain()">Voltar</button>
+			</div>
+		</div>
+		<div class="species-detail-content">
+			<h2 class="species-detail-title" id="speciesContentTitle">Mamíferos</h2>
+			<div class="animal-grid" id="animalGrid">
+				<!-- Cards injected by JS -->
+			</div>
+		</div>
+	</div>
 </div>
+
 <div id="animalProfilePage" class="page">
-  <div class="content-wrapper">
-    <!-- REMOVE ALL THIS:
-    <div class="animal-profile-header"></div>
-    <h1 id="animalProfileName">Lion</h1>
-    <div class="animal-profile-nav">...</div>
-    -->
-
-    <!-- NEW: CLEAN CONTENT -->
-    <div class="animal-profile-content">
-      <div class="animal-image-container">
-        <img id="animalProfileImage" class="animal-image" src="" alt="Animal">
-      </div>
-      <div class="animal-info">
-        <div class="animal-name" id="animalProfileTitle">Leão</div>
-        <div class="animal-detail">
-          <span class="animal-label">Population:</span>
-          <span class="animal-value" id="animalPopulation">~20.000</span>
-        </div>
-        <div class="animal-detail">
-          <span class="animal-label">Status:</span>
-          <span id="animalStatus" class="animal-value status-endangered">Vulnerável</span>
-        </div>
-        <div class="animal-description" id="animalDescription">
-          O leão é um grande felino...
-        </div>
-
-        <!-- "VOLTAR" BUTTON BELOW -->
-        <div class="profile-button-wrapper">
-            <button class="nav-button" onclick="showSpeciesDetail(currentSpecies)">Voltar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="content-wrapper">
+		<div class="animal-profile-content">
+			<div class="animal-image-container">
+				<img id="animalProfileImage" class="animal-image" src="" alt="Animal">
+			</div>
+			<div class="animal-info">
+				<div class="animal-name" id="animalProfileTitle">Leão</div>
+				<div class="animal-detail">
+					<span class="animal-label">População:</span>
+					<span class="animal-value" id="animalPopulation">~20.000</span>
+				</div>
+				<div class="animal-detail">
+					<span class="animal-label">Status:</span>
+					<span id="animalStatus" class="animal-value status-endangered">Vulnerável</span>
+				</div>
+				<div class="animal-detail">
+					<span class="animal-label">Habitat:</span>
+					<span class="animal-value" id="animalHabitat">Europa</span>
+				</div>
+				<div class="animal-description" id="animalDescription">
+					O leão é um grande felino...
+				</div>
+				<div class="profile-button-wrapper">
+					<button class="nav-button" onclick="showSpeciesDetail(currentSpecies)">Voltar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Dashboard -->
 <div id="dashboardPage" class="page">
-  <div class="content-wrapper">
-    <div class="header">
-      <h1>Dashboard</h1>
-      <div class="nav-buttons">
-        <button class="nav-button" onclick="showToMain()">Voltar</button>
-      </div>
-    </div>
-
-    <div class="main-content">
-        <div style="display: flex; gap: 40px; align-items: flex-start;">
-        <div style="text-align: center;">
-            <div style="width: 120px; height: 120px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-            <span style="font-size: 48px; font-weight: bold; color: #666;">US</span>
-            </div>
-        </div>
-
-        <div class="user-info-container"> <h2 style="margin: 0 0 10px; font-size: 24px;" id="userName">Utilizador</h2>
-      
-        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
-            <span style="font-weight: bold; margin-left: 10px;">Email:</span>
-            <span id="userEmail">user@example.com</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
-            <span style="font-weight: bold; margin-left: 10px;">Password:</span>
-            <span id="userPassword">********</span>
-        </div>
-
-        <button class="dashboard-button" onclick="toggleUpdateForm(true)" style="margin-left: 10px;">Atualizar Dados</button>
-
-        <div id="updateForm" style="display: none; margin-top: 20px;"> <label for="updateName" style="margin-left: 10px;">Novo Nome:</label>
-            <input type="text" id="updateName" placeholder="Deixe vazio para manter o nome atual" style="margin-left: 10px; width: 100%;">
-            <br />
-            <label for="updateEmail" style="margin-left: 10px;">Novo Email:</label>
-            <input type="email" id="updateEmail" placeholder="Deixe vazio para manter o email atual" style="margin-left: 10px; width: 100%;">
-            <br />
-            <label for="updatePassword" style="margin-left: 10px;">Nova Password:</label>
-            <input type="password" id="updatePassword" placeholder="Apenas se quiser alterar (mín. 6 car.)" style="margin-left: 10px; width: 100%;">
-            <br />
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="dashboard-button" onclick="window.handleUpdate()" style="margin-left: 10px; flex: 1;">Atualizar</button>
-                <button class="logout-button" onclick="toggleUpdateForm(false)" style="margin-left: 10px; flex: 1;">Cancelar</button>
-            </div>
-        </div>
-
-        <div id="fixedButtons" style="margin-top: 20px;">
-            <button class="dashboard-button" onclick="window.handleLogout()" style="margin-left: 10px;">Terminar Sessão</button>
-            <button class="logout-button" onclick="window.handleDelete()" style="margin-left: 10px;">Eliminar Conta</button>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="content-wrapper">
+		<div class="header">
+			<h1>Dashboard</h1>
+			<div class="nav-buttons">
+				<button class="nav-button" onclick="showToMain()">Voltar</button>
+			</div>
+		</div>
+		<div class="main-content">
+			<div style="display: flex; gap: 40px; align-items: flex-start;">
+				<div class="user-info-container">
+					<h2 style="margin: 0 0 10px; font-size: 24px;" id="userName">Utilizador</h2>
+					<div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
+						<span style="font-weight: bold; margin-left: 10px;">Email:</span>
+						<span id="userEmail">user@example.com</span>
+					</div>
+					<div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; font-size: 16px;">
+						<span style="font-weight: bold; margin-left: 10px;">Password:</span>
+						<span id="userPassword">********</span>
+					</div>
+					<button class="dashboard-button" onclick="toggleUpdateForm(true)" style="margin-left: 10px;">Atualizar Dados</button>
+					<div id="updateForm" style="display: none; margin-top: 20px;">
+						<label for="updateName" style="margin-left: 10px;">Novo Nome:</label>
+						<input type="text" id="updateName" placeholder="Deixe vazio para manter o nome" style="margin-left: 10px; width: 100%;">
+						<br />
+						<label for="updateEmail" style="margin-left: 10px;">Novo Email:</label>
+						<input type="email" id="updateEmail" placeholder="Deixe vazio para manter o email" style="margin-left: 10px; width: 100%;">
+						<br />
+						<label for="updatePassword" style="margin-left: 10px;">Nova Password:</label>
+						<input type="password" id="updatePassword" placeholder="Deixe vazio para manter a password (mín. 6 car.)" style="margin-left: 10px; width: 100%;">
+						<br />
+						<div style="display: flex; gap: 10px; margin-top: 10px;">
+							<button class="dashboard-button" onclick="window.handleUpdate()" style="margin-left: 10px; flex: 1;">Atualizar</button>
+							<button class="logout-button" onclick="toggleUpdateForm(false)" style="margin-left: 10px; flex: 1;">Cancelar</button>
+						</div>
+					</div>
+					<div id="fixedButtons" style="margin-top: 20px;">
+						<button class="dashboard-button" onclick="window.handleLogout()" style="margin-left: 10px;">Terminar Sessão</button>
+						<button class="logout-button" onclick="window.handleDelete()" style="margin-left: 10px;">Eliminar Conta</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
 </body>
 </html>

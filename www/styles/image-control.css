@@ -55,8 +55,23 @@
   color: #333;
 }
 
+.status-extinct {
+  color: #000000;
+  font-weight: bold;
+}
+
 .status-endangered {
   color: #d32f2f;
+  font-weight: bold;
+}
+
+.status-vulnerable {
+  color: #937700;
+  font-weight: bold;
+}
+
+.status-stable {
+  color: #748e38;
   font-weight: bold;
 }
 

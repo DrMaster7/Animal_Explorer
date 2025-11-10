@@ -14,7 +14,8 @@ function runQuery(res, sql, label) {
 	connection.connect(); // Abre a ligação à base de dados.
 	connection.query(sql, function (err, rows) { // Executa a query recebida.
 		if (err) {
-			res.status(404).json({ "Message": `Error - MySQL query to ${label}` }); // Retorna um status 404 (erro - requisito não encontrado).
+			console.error(`Erro na query MySQL para ${label}: ${err.message}`); // Adicione log para debug
+            res.status(500).json({ "Message": `Error - MySQL query to ${label}`, details: err.message }); // Retorna 500
 		} else {
 			res.status(200).json({ "Message": "Success", [label]: rows }); // Retorna sucesso com os dados da query no campo identificado por label.
 		}
@@ -290,9 +291,9 @@ module.exports.handleDelete = handleDelete; // Exporta a função de delete.
  */
 const handleCheckSession = (req, res) => {
 	if (req.session && req.session.user) { // Verifica se existe sessão e user na sessão.
-		res.status(200).json({ "Message": "Sessão ativa", "user": req.session.user }); // Retorna 200 com dados da sessão.
+		res.status(200).json({ sessionActive: true, user: req.session.user }); // Retorna 200 com dados da sessão.
 	} else {
-		res.status(401).json({ "Message": "Sessão inativa. É necessário login." }); // Retorna 401 se sem sessão.
+		res.status(401).json({ sessionActive: false, message: "Sessão inativa. É necessário login." }); // Retorna 401 se sem sessão.
 	}
 };
 module.exports.handleCheckSession = handleCheckSession; // Exporta a função de verificação de sessão.
@@ -303,7 +304,14 @@ module.exports.handleCheckSession = handleCheckSession; // Exporta a função de
  * @param {*} res
  */
 const getAnimals = (req, res) => {
-	runQuery(res, "SELECT animal_id, animal_name, animal_population, animal_habitat, animal_category FROM animal", "animal"); // Chama runQuery para obter animais.
+	const category = req.query.category;
+	let sql = "SELECT animal_id, animal_name, animal_population, animal_status, animal_status_class, animal_description, animal_image_url, animal_habitat, animal_category FROM animal";
+
+    if (category) { // Se a categoria for fornecida, adiciona a cláusula WHERE
+        sql += mysql.format(" WHERE animal_category = ?", [category]); // Usamos mysql.format para sanitizar o input e evitar SQL Injection
+    }
+
+	runQuery(res, sql, "animal"); // Chama runQuery para obter animais.
 };
 module.exports.getAnimals = getAnimals; // Exporta função que obtém animais.
 

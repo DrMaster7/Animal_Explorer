@@ -236,132 +236,9 @@ window.loginStatus = () => {
 };
 
 // =========================
-// Dados estáticos dos animais (JSON, para ser transferidos para a BD)
-// =========================
-const SPECIES_DATA = {
-	'Mamíferos': [
-		{
-			name: 'Leão', // Nome da espécie.
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/400px-Lion_waiting_in_Namibia.jpg', // URL da imagem.
-			population: '~20.000', // Indicação de população.
-			status: 'Vulnerável', // Estado de conservação.
-			statusClass: 'status-endangered', // Classe CSS para estado.
-			description: 'O leão é um grande felino do género Panthera, nativo de África e da Índia. Conhecido como "rei da selva", vive em grupos familiares chamados alcateias.' // Descrição.
-		},
-		{
-			name: 'Elefante',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg',
-			population: '~415.000',
-			status: 'Vulnerável',
-			statusClass: 'status-endangered',
-			description: 'O elefante é o maior animal terrestre. Vive em savanas e florestas de África e Ásia, em grupos liderados por fêmeas mais velhas.'
-		},
-		{
-			name: 'Tigre',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg',
-			population: '~3.900',
-			status: 'Em perigo',
-			statusClass: 'status-endangered',
-			description: 'O tigre é o maior felino do mundo. Vive na Ásia e enfrenta ameaças devido à caça furtiva e perda de habitat.'
-		}
-	],
-	'Aves': [
-		{
-			name: 'Águia-real',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Aquila_chrysaetos_wildlife.jpg',
-			population: 'Desconhecida',
-			status: 'Pouco preocupante',
-			statusClass: 'status-stable',
-			description: 'A águia-real é uma das maiores aves de rapina. Habita zonas montanhosas e é símbolo de força e liberdade.'
-		},
-		{
-			name: 'Pinguim-imperador',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Emperor_Penguin_Manchot_empereur.jpg',
-			population: '~595.000',
-			status: 'Quase ameaçado',
-			statusClass: 'status-vulnerable',
-			description: 'Maior espécie de pinguim, vive na Antártida e é adaptado a condições extremas de frio.'
-		}
-	],
-	'Répteis': [
-		{
-			name: 'Cobra-real',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Kingcobra.jpg',
-			population: 'Desconhecida',
-			status: 'Vulnerável',
-			statusClass: 'status-endangered',
-			description: 'Maior cobra venenosa do mundo, encontrada no sul e sudeste da Ásia.'
-		},
-		{
-			name: 'Tartaruga-verde',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Green_turtle_swimming_over_coral_reefs_in_Kona.jpg',
-			population: 'Desconhecida',
-			status: 'Em perigo',
-			statusClass: 'status-endangered',
-			description: 'Espécie marinha que percorre longas distâncias nos oceanos tropicais e subtropicais.'
-		}
-	],
-	'Anfíbios': [
-		{
-			name: 'Sapo-comum',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/4/49/Common_toad.jpg',
-			population: 'Comum',
-			status: 'Pouco preocupante',
-			statusClass: 'status-stable',
-			description: 'Espécie amplamente distribuída pela Europa, conhecida pela pele rugosa e hábitos noturnos.'
-		},
-		{
-			name: 'Axolote',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Axolotl_Branco.jpg',
-			population: 'Em declínio',
-			status: 'Criticamente em perigo',
-			statusClass: 'status-endangered',
-			description: 'Espécie mexicana conhecida pela capacidade de regeneração e por permanecer em fase larval durante toda a vida.'
-		}
-	],
-	'Peixes': [
-		{
-			name: 'Tubarão-branco',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg',
-			population: 'Desconhecida',
-			status: 'Vulnerável',
-			statusClass: 'status-endangered',
-			description: 'Predador marinho de topo encontrado em todos os oceanos temperados.'
-		},
-		{
-			name: 'Cavalo-marinho',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Hippocampus_zosterae.jpg',
-			population: 'Desconhecida',
-			status: 'Vulnerável',
-			statusClass: 'status-endangered',
-			description: 'Peixe pequeno que vive em águas rasas e se caracteriza pelo formato do corpo e pela forma de reprodução única.'
-		}
-	],
-	'Insetos': [
-		{
-			name: 'Borboleta-monarca',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Monarch_In_May.jpg',
-			population: 'Em declínio',
-			status: 'Quase ameaçado',
-			statusClass: 'status-vulnerable',
-			description: 'Espécie migratória que percorre milhares de quilómetros entre o Canadá e o México.'
-		},
-		{
-			name: 'Abelha-europeia',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Honeybee_landing_on_flowers.jpg',
-			population: 'Comum mas em declínio',
-			status: 'Quase ameaçado',
-			statusClass: 'status-vulnerable',
-			description: 'Importante polinizadora em ecossistemas e agricultura, ameaçada pelo uso de pesticidas e perda de habitat.'
-		}
-	]
-};
-
-// =========================
 // Detalhes da espécie
 // =========================
-let currentSpecies = ''; // Guarda a espécie atual seleccionada.
-
+let currentSpecies = null;
 function showSpeciesDetail(species) {
 	currentSpecies = species; // Define a espécie actual.
 
@@ -371,39 +248,64 @@ function showSpeciesDetail(species) {
 
 	headerTitle.textContent = species; // Atualiza título do cabeçalho.
 	contentTitle.textContent = species; // Atualiza título do conteúdo.
-	grid.innerHTML = ''; // Limpa o grid antes de povoar.
+	grid.innerHTML = '';
 
-	const animals = SPECIES_DATA[species] || []; // Obtém array de animais para a espécie ou array vazio.
+	const xhr = new XMLHttpRequest();
+	const url = `/animal?category=${encodeURIComponent(species)}`;
 
-	animals.forEach(animal => {
-		const card = document.createElement('div'); // Cria um elemento div para card.
-		card.className = 'animal-card'; // Atribui classe CSS ao card.
-		card.onclick = () => showAnimalProfile(animal); // Define onclick para mostrar perfil do animal.
-		card.innerHTML = `
-				<div class="animal-image" style="background-image: url('${animal.img}');"></div>
-				<div class="animal-name">${animal.name}</div>
-			`;
-		grid.appendChild(card); // Adiciona o card ao grid.
-	});
+	xhr.open("GET", url, true); 
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const resp = JSON.parse(xhr.responseText);
+                    const animals = resp.animal || []; // O array de animais está no campo 'animal'
 
-	showPage('speciesDetailPage'); // Mostra a página de detalhe da espécie.
+                    // Criação dos cards dos animais
+                    animals.forEach(animal => {
+                        const card = document.createElement('div');
+                        card.className = 'animal-card';
+                        card.onclick = () => showAnimalProfile(animal);  // Os nomes dos campos usam as desiganção da BD
+                        card.innerHTML = `
+                            <div class="animal-image" style="background-image: url('${animal.animal_image_url}');"></div>
+                            <div class="animal-name">${animal.animal_name}</div>
+                        `;
+                        grid.appendChild(card);
+                    });
+
+                    if (animals.length === 0) {
+                         grid.innerHTML = 'Nenhum animal encontrado para esta categoria.';
+                    }
+                } catch (e) {
+                    grid.innerHTML = 'Erro ao processar a resposta do servidor.';
+                    console.error("Erro ao parsear JSON:", e);
+                }
+            } else {
+                grid.innerHTML = `Erro ao carregar dados: ${xhr.status} ${xhr.statusText}`;
+                alert(`Erro ao carregar animais: ${xhr.responseText}`);
+            }
+        }
+    };
+	xhr.send(); 
+    showPage('speciesDetailPage'); // Mostra a página de detalhe da espécie
 }
 
 // =========================
 // Perfil do animal
 // =========================
 function showAnimalProfile(animal) {
-	if (!animal) return; // Retorna se não foi passado objecto animal.
+    if (!animal) return; // Retorna se não foi passado objecto animal.
 
-	document.getElementById('animalProfileTitle').textContent = animal.name; // Define título do perfil com o nome do animal.
-	document.getElementById('animalProfileImage').src = animal.img; // Define src da imagem do perfil.
-	document.getElementById('animalPopulation').textContent = animal.population || 'Unknown'; // Mostra população ou 'Unknown' se ausente.
+	document.getElementById('animalProfileTitle').textContent = animal.animal_name; // Define título do perfil com o nome do animal.
+	document.getElementById('animalProfileImage').src = animal.animal_image_url; // Define src da imagem do perfil.
+	document.getElementById('animalPopulation').textContent = animal.animal_population; // Mostra a população do animal.
+	document.getElementById('animalHabitat').textContent = animal.animal_habitat; // Mostra o habitat do animal.
 
 	const statusEl = document.getElementById('animalStatus'); // Elemento que mostra o estado de conservação.
-	statusEl.textContent = animal.status || 'Unknown'; // Define texto do estado.
-	statusEl.className = `animal-value ${animal.statusClass || ''}`; // Define classes CSS para estilo do estado.
+	statusEl.textContent = animal.animal_status; // Define o texto do estado do animal (mesmo os animais não considerados tem a sua consideração local).
+	statusEl.className = `animal-value ${animal.animal_status_class || ''}`; // Define classes CSS para estilo do estado.
 
-	document.getElementById('animalDescription').textContent = animal.description || 'No description available.'; // Define descrição do animal.
+	document.getElementById('animalDescription').textContent = animal.animal_description || 'No description available.'; // Define descrição do animal.
 
-	showPage('animalProfilePage'); // Mostra a página de perfil do animal.
+    showPage('animalProfilePage'); // Mostra a página de perfil do animal.
 }
