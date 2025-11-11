@@ -15,9 +15,11 @@ function runQuery(res, sql, label) {
     connection.query(sql, function (err, rows) { // Executa a query
         if (err) { // Se houver erro
             res.status(500).json({ "Message": `Erro - Query MySQL para ${label}`, details: err.message }); // Retorna erro 500 (Internal Server Error)
-        } else { // Se query for bem-sucedida
+			return;
+		} else { // Se query for bem-sucedida
             res.status(200).json({ "Message": "Sucesso", [label]: rows }); // Retorna sucesso com os resultados
-        }
+			return;
+		}
     });
     connection.end(); // Fecha a conexão
 }
@@ -41,12 +43,15 @@ const handleSignup = (req, res) => {
             if (err) { // Se houver erro na query
                 if (err.code === 'ER_DUP_ENTRY') { // Se o email já existe
                     res.status(409).json({ "Message": "Erro - Email já em uso por outra conta." }); // Retorna erro 409 (Conflict Error)
-                } else { // Outros erros
+					return;
+				} else { // Outros erros
                     res.status(500).json({ "Message": `Erro ao fazer registo da conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error)
-                }
+					return;
+				}
             } else { // Se inserção bem-sucedida
                 res.status(200).json({ "Message": "Conta registada com sucesso.", "user_id": rows.insertId }); // Retorna com sucesso o aviso da conta criada (com o ID do novo utilizador)
-            }
+				return;
+			}
         }
     );
     connection.end(); // Fecha conexão
@@ -70,10 +75,12 @@ const handleLogin = (req, res) => {
             if (err) { // Se erro na query
                 res.status(500).json({ "Message": `Erro ao fazer login da conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error)
                 connection.end(); // Fecha conexão
+				return;
             }
             if (rows.length === 0) { // Se um utilizador não for encontrado
                 res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error)
                 connection.end(); // Fecha conexão
+				return;
             }
             const user = rows[0]; // Pega o registo do utilizador
             bcrypt.compare(password, user.user_password, function(errB, result) { // Compara a password fornecida com a hash
@@ -85,9 +92,11 @@ const handleLogin = (req, res) => {
                     };
                     delete user.user_password; // Remove a password (por questões de segurança)
                     res.status(200).json({ "Message": "Login realizado com sucesso.", "user": req.session.user }); // Retorna sucesso
-                } else { // Se a password estiver incorreta
+					return;
+				} else { // Se a password estiver incorreta
                     res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error)
-                }
+					return;
+				}
                 connection.end(); // Fecha conexão após comparação
             });
         }
@@ -104,9 +113,11 @@ const handleLogout = (req, res) => {
     req.session.destroy(err => { // Destroi a sessão ativa em questão.
         if (err) { // Se houver algum erro
             res.status(500).json({ "Message": "Erro ao fazer logout." }); // Retorna erro 500 (Internal Server Error)
+			return;
         }
         res.clearCookie('connect.sid'); // Limpa o cookie.
         res.status(200).json({ "Message": "Logout realizado com sucesso." }); // Retorna sucesso
+		return;
     });
 };
 module.exports.handleLogout = handleLogout;
@@ -119,6 +130,7 @@ module.exports.handleLogout = handleLogout;
 const handleRead = (req, res) => {
 	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica a existência e a validade da sessão.
 		res.status(401).json({ "Message": "Não autorizado. Sessão inexistente ou inválida." }); // Retorna erro 401 (Unauthorized Error) se sessão inválida
+		return;
 	}
 
 	const uid = req.session.user.user_id; // Id do utilizador
@@ -131,11 +143,14 @@ const handleRead = (req, res) => {
             connection.end(); // Fecha a conexão quando recebe resposta.
 			if (err) {
 				res.status(500).json({ "Message": `Erro ao ler dados do utilizador: ${err.message}` }); // Retorna erro 500 (Internal Server Error) em caso de erro na Base de Dados.
+				return;
 			}
 			if (rows.length === 0) {
 				res.status(404).json({ "Message": "Utilizador não encontrado." }); // Retorna erro 404 (Not Found Error) se o utilizador não existir.
+				return;
 			}
 			res.status(200).json({ "Message": "Sucesso", "user": rows[0] }); // Retorna os dados do utilizador.
+			return;
 		}
 	);
 };
@@ -149,6 +164,7 @@ module.exports.handleRead = handleRead;
 const handleUpdate = (req, res) => {
 	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica a existência e a validade da sessão.
 		res.status(401).json({ "Message": "Não autorizado. Sessão inexistente ou inválida." }); // Retorna erro 401 (Unauthorized Error) se sessão inválida.
+		return;
 	}
 
 	const uid = req.session.user.user_id; // Id do utilizador
@@ -156,6 +172,7 @@ const handleUpdate = (req, res) => {
 
 	if (!name && !email && !newPassword) { // Verifica se há pelo menos um campo para atualizar.
 		res.status(400).json({ "Message": "Nenhum campo fornecido para atualizar." }); // Retorna erro 400 (Bad Request Error) se nenhum campo foi fornecido.
+		return;
 	}
 
 	const connection = mysql.createConnection(options); // Cria conexão à base de dados para executar a atualização dos dados
@@ -179,6 +196,7 @@ const handleUpdate = (req, res) => {
 			if (errHash) {
 				connection.end(); // Fecha conexão em caso de erro no hash
 				res.status(500).json({ "Message": "Erro ao gerar hash da password." }); // Retorna erro 500 (Internal Server Error) em caso de erro no hash
+				return;
 			}
 			updates.push("user_password = ?"); // Adiciona atualização do campo password
 			params.push(hash); // Adiciona hash ao array de parâmetros
@@ -196,14 +214,17 @@ const handleUpdate = (req, res) => {
 			if (err) {
 				if (err.code === 'ER_DUP_ENTRY') {
 					res.status(409).json({ "Message": "Erro - Credenciais já em uso por outra conta." }); // Retorna erro 409 (Conflict Error) se o nome ou email já for utilizado por outra conta.
+					return;
 				}
 				res.status(500).json({ "Message": `Erro ao atualizar conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error) em caso de erro genérico.
+				return;
 			}
 			if (req.session.user) { // Atualiza os dados na sessão caso existam alterações
 				if (name) req.session.user.user_name = name; // Atualiza nome na sessão
 				if (email) req.session.user.user_email = email; // Atualiza email na sessão
 			}
 			res.status(200).json({ "Message": "Dados da conta atualizados com sucesso." }); // Retorna sucesso
+			return;
 		});
 	};
 };
@@ -215,18 +236,27 @@ module.exports.handleUpdate = handleUpdate;
  * @param {*} res
  */
 const handleDelete = (req, res) => {
+	if (!req.session || !req.session.user || !req.session.user.user_id) {
+    	res.status(401).json({ "Message": "Não autorizado. Sessão inexistente ou inválida." });
+		return;
+	}
+	
+	const uid = req.session.user.user_id; // Define o uid da sessão
 	const body = req.body || {}; // Garante um objecto body mesmo que não venha no pedido
 	const confirmed = body.confirmDelete === true || body.confirmDelete === 'true' || body.confirmDelete === 1 || body.confirmDelete === '1'; // Normaliza formas de confirmação da operação
 	if (!confirmed) { // Se não houver confirmação
 		res.status(300).json({ "Message": "Confirmação necessária – Tem a certeza de que deseja eliminar a conta?" }); // Retorna 300 (Multiple Choices) se não há confirmação
+		return;
 	}
 	const email = body.email; // Email fornecido para confirmar identidade
 	if (!email) {
 		res.status(400).json({ "Message": "Email obrigatório para eliminar a conta." }); // Retorna erro 400 (Bad Request Error) se faltar email.
+		return;
 	}
 	const password = body.password; // Password fornecida para confirmar identidade
 	if (!password) {
 		res.status(400).json({ "Message": "Password obrigatória para eliminar a conta." }); // Retorna erro 400 (Bad Request Error) se faltar password.
+		return;
 	}
 	const connection = mysql.createConnection(options); // Cria conexão à base de dados para verificar e eliminar o utilizador.
 	connection.connect(); // Abre conexão
@@ -236,10 +266,12 @@ const handleDelete = (req, res) => {
 			if (errA) { // Se erro na query
                 res.status(500).json({ "Message": `Erro ao aceder à base de dados: ${errA.message}` }); // Retorna erro 500 (Internal Server Error)
                 connection.end(); // Fecha conexão
+				return;
             }
             if (rows.length === 0) { // Se um utilizador não for encontrado
                 res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error) se dados não corresponderem
                 connection.end(); // Fecha conexão
+				return;
             }
 			const user = rows[0]; // Pega o utilizador encontrado.
 
@@ -247,10 +279,12 @@ const handleDelete = (req, res) => {
 				if (errB) {
 					res.status(500).json({ "Message": "Erro ao verificar a password." }); // Retorna erro 500 (Internal Server Error) se houver erro a verificar password
 					connection.end(); // Fecha conexão
+					return;
 				}
 				if (!result) {
 					res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error) se autenticação falhou.
 					connection.end(); // Fecha conexão
+					return;
 				}
 				connection.query(
 					mysql.format("DELETE FROM user WHERE user_id = ?", [uid]), // Query para eliminar o utilizador pelo id
@@ -258,18 +292,22 @@ const handleDelete = (req, res) => {
 						connection.end(); // Fecha conexão após tentativa de delete
 						if (errUser) {
 							res.status(500).json({ "Message": `Erro ao eliminar conta: ${errUser.message}` }); // Retorna erro 500 (Internal Server Error) se falha ao eliminar
+							return;
 						}
 						if (req.session) { // Se existe sessão, tenta destruí-la depois do delete
 							req.session.destroy(errS => {
 								if (errS) { // Se houver erro a eliminar a sessão
 									res.clearCookie('connect.sid'); // Mesmo que não consiga destruir, limpa cookie no cliente
 									res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se havia sessão e não foi destruída)
+									return;
 								}
 								res.clearCookie('connect.sid'); // Limpa cookie se sessão destruída com sucesso
 								res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se havia sessão e foi destruída)
+								return;
 							});
 						} else {
 							res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se não havia sessão)
+							return;
 						}
 					}
 				);
@@ -287,8 +325,10 @@ module.exports.handleDelete = handleDelete;
 const handleCheckSession = (req, res) => {
 	if (req.session && req.session.user) { // Verifica se existe sessão e user na sessão
 		res.status(200).json({ sessionActive: true, user: req.session.user }); // Retorna sucesso (com dados da sessão).
+		return;
 	} else {
 		res.status(401).json({ sessionActive: false, message: "Sessão inativa. É necessário login." }); // Retorna erro 401 (Unauthorized Error) se não houver sessão.
+		return;
 	}
 };
 module.exports.handleCheckSession = handleCheckSession;
