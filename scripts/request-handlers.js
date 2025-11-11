@@ -1,280 +1,275 @@
 "use strict";
-const mysql = require("mysql2"); // Importa o cliente MySQL2.
-const options = require("./connectionOptions.json"); // Carrega opções de conexão com a BD a partir de ficheiro.
-const bcrypt = require("bcrypt"); // Importa bcrypt para hashing de passwords.
+const mysql = require("mysql2"); // Cliente MySQL
+const options = require("./connectionOptions.json"); // Configurações de conexão à base de dados
+const bcrypt = require("bcrypt"); // Biblioteca para hashing de passwords
 
 /**
- * Função que executa uma query MySQL e envia resposta JSON uniforme 
- * @param {*} res
- * @param {string} sql
- * @param {string} label
+ * Executa uma query MySQL e retorna resposta JSON padronizada
+ * @param {*} res - Objeto de resposta do Express
+ * @param {string} sql - Query SQL a executar
+ * @param {string} label - Nome do campo da resposta JSON que conterá os resultados
  */
 function runQuery(res, sql, label) {
-	const connection = mysql.createConnection(options); // Cria nova conexão MySQL com as opções fornecidas.
-	connection.connect(); // Abre a ligação à base de dados.
-	connection.query(sql, function (err, rows) { // Executa a query recebida.
-		if (err) {
-			console.error(`Erro na query MySQL para ${label}: ${err.message}`); // Adicione log para debug
-            res.status(500).json({ "Message": `Error - MySQL query to ${label}`, details: err.message }); // Retorna 500
-		} else {
-			res.status(200).json({ "Message": "Success", [label]: rows }); // Retorna sucesso com os dados da query no campo identificado por label.
-		}
-	});
-	connection.end(); // Fecha a conexão à base de dados.
+    const connection = mysql.createConnection(options); // Cria conexão com a base de dados
+    connection.connect(); // Abre a conexão
+    connection.query(sql, function (err, rows) { // Executa a query
+        if (err) { // Se houver erro
+            res.status(500).json({ "Message": `Erro - Query MySQL para ${label}`, details: err.message }); // Retorna erro 500 (Internal Server Error)
+        } else { // Se query for bem-sucedida
+            res.status(200).json({ "Message": "Sucesso", [label]: rows }); // Retorna sucesso com os resultados
+        }
+    });
+    connection.end(); // Fecha a conexão
 }
 
 /**
- * Função que lida com novos registos de utilizadores via POST
+ * Novos registos (sign up) de utilizadores
  * @param {*} req
  * @param {*} res
  */
 const handleSignup = (req, res) => {
-	const name = req.body.name; // Lê o nome enviado no corpo do pedido.
-	const email = req.body.email; // Lê o email enviado no corpo do pedido.
-	const password = req.body.password; // Lê a password enviada no corpo do pedido.
-	const hash = bcrypt.hashSync(password, 10); // Gera hash síncrono da password com salt rounds 10.
+    const name = req.body.name; // Lê nome do corpo da requisição
+    const email = req.body.email; // Lê email do corpo da requisição
+    const password = req.body.password; // Lê password do corpo da requisição
+    const hash = bcrypt.hashSync(password, 10); // Gera hash da password com 10 salt rounds
 
-	const connection = mysql.createConnection(options); // Cria conexão à BD para inserir o utilizador.
-	connection.connect(); // Abre a ligação.
-	connection.query(
-		mysql.format("INSERT INTO user (user_name, user_email, user_password) VALUES (?, ?, ?)", [name, email, hash]), // Query preparada para inserir dados do utilizador.
-		function (err, rows, fields) {
-			if (err) {
-				if (err.code === 'ER_DUP_ENTRY') {
-					res.status(409).json({ "Message": "Erro - Outra conta já utiliza esse email." }); // Retorna 409 quando o email já existe (unique key).
-				} else {
-					res.status(500).json({ "Message": `Erro - MySQL query to signup: ${err.message}` }); // Retorna 500 com a mensagem de erro da BD.
-				}
-			} else {
-				res.status(200).json({ "Message": "Sucesso - Conta registada no Animal Explorer. Bem-vindo.", "user_id": rows.insertId }); // Retorna sucesso e o id do novo utilizador.
-			}
-		}
-	);
-	connection.end(); // Fecha a conexão após a operação.
+    const connection = mysql.createConnection(options); // Cria conexão à BD
+    connection.connect(); // Abre a conexão
+    connection.query(
+        mysql.format("INSERT INTO user (user_name, user_email, user_password) VALUES (?, ?, ?)", [name, email, hash]), // Query SQL para inserir o utilizador na base de dados com os valores inseridos pelo mesmo.
+        function (err, rows) { // Callback após execução da query
+            if (err) { // Se houver erro na query
+                if (err.code === 'ER_DUP_ENTRY') { // Se o email já existe
+                    res.status(409).json({ "Message": "Erro - Email já em uso por outra conta." }); // Retorna erro 409 (Conflict Error)
+                } else { // Outros erros
+                    res.status(500).json({ "Message": `Erro ao fazer registo da conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error)
+                }
+            } else { // Se inserção bem-sucedida
+                res.status(200).json({ "Message": "Conta registada com sucesso.", "user_id": rows.insertId }); // Retorna com sucesso o aviso da conta criada (com o ID do novo utilizador)
+            }
+        }
+    );
+    connection.end(); // Fecha conexão
 };
-module.exports.handleSignup = handleSignup; // Exporta a função de signup.
+module.exports.handleSignup = handleSignup;
 
 /**
- * Função que lida com os inícios de sessão (login) dos utilizadores via POST.
+ * Inícios de sessão (login) dos utilizadores.
  * @param {*} req
  * @param {*} res
  */
 const handleLogin = (req, res) => {
-	const email = req.body.email; // Lê o email enviado no corpo do pedido.
-	const password = req.body.password; // Lê a password enviada no corpo do pedido.
+    const email = req.body.email; // Lê email
+    const password = req.body.password; // Lê password
 
-	const connection = mysql.createConnection(options); // Cria conexão à BD para verificar credenciais.
-	connection.connect(); // Abre ligação.
-	connection.query(
-		mysql.format("SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = ?", [email]), // Query preparada para obter dados do utilizador por email.
-		function (err, rows) {
-			if (err) {
-				res.status(500).json({ "Message": `Error - MySQL query to login: ${err.message}` }); // Retorna 500 se houve erro na query.
-				connection.end(); // Fecha a conexão em caso de erro.
-				return; // Sai da função.
-			}
-			if (rows.length === 0) {
-				res.status(401).json({ "Message": "Erro - Dados inseridos incorretamente." }); // Retorna 401 se não existe utilizador com esse email.
-				connection.end(); // Fecha a conexão.
-				return; // Sai da função.
-			}
-			const user = rows[0]; // Pega o primeiro registo retornado (deverá ser único).
-			bcrypt.compare(password, user.user_password, function(errB, result) { // Compara password fornecida com hash guardado.
-				if (result === true) {
-					req.session.user = {
-						user_id: user.user_id, // Guarda o id do utilizador na sessão.
-						user_name: user.user_name, // Guarda o nome do utilizador na sessão.
-						user_email: user.user_email // Guarda o email do utilizador na sessão.
-					};
-					delete user.user_password; // Remove a password do objecto user por segurança.
-					res.status(200).json({ "Message": "Sucesso - Login bem-sucedido. Bem-vindo.", "user": req.session.user }); // Retorna sucesso com dados da sessão.
-				} else {
-					res.status(401).json({ "Message": "Dados inseridos incorretamente." }); // Retorna 401 se a password não corresponder.
-				}
-				connection.end(); // Fecha a conexão após comparação.
-				return; // Sai da callback.
-			});
-		}
-	);
+    const connection = mysql.createConnection(options); // Cria conexão à Base de Dados
+    connection.connect(); // Abre conexão
+    connection.query(
+        mysql.format("SELECT user_id, user_name, user_email, user_password FROM user WHERE user_email = ?", [email]), // Query SQL para selecionar utilizadores do qual o email corresponda ao email inserido pelo utilizador.
+        function (err, rows) { // Callback da query
+            if (err) { // Se erro na query
+                res.status(500).json({ "Message": `Erro ao fazer login da conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error)
+                connection.end(); // Fecha conexão
+            }
+            if (rows.length === 0) { // Se um utilizador não for encontrado
+                res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error)
+                connection.end(); // Fecha conexão
+            }
+            const user = rows[0]; // Pega o registo do utilizador
+            bcrypt.compare(password, user.user_password, function(errB, result) { // Compara a password fornecida com a hash
+                if (result === true) { // Se a password estiver correta correta
+                    req.session.user = { // Guarda os dados do utilizador na sessão, no caso de ele fechar a aba ou reiniciar a aplicação.
+                        user_id: user.user_id,
+                        user_name: user.user_name,
+                        user_email: user.user_email
+                    };
+                    delete user.user_password; // Remove a password (por questões de segurança)
+                    res.status(200).json({ "Message": "Login realizado com sucesso.", "user": req.session.user }); // Retorna sucesso
+                } else { // Se a password estiver incorreta
+                    res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error)
+                }
+                connection.end(); // Fecha conexão após comparação
+            });
+        }
+    );
 };
-module.exports.handleLogin = handleLogin; // Exporta a função de login.
+module.exports.handleLogin = handleLogin;
 
 /**
- * Função que lida com os términos de sessão (logout) dos utilizadores.
+ * Términos de sessão (logout) dos utilizadores.
  * @param {*} req
  * @param {*} res
  */
 const handleLogout = (req, res) => {
-	req.session.destroy(err => { // Destroi a sessão atual no servidor.
-		if (err) {
-			return res.status(500).json({ "Message": "Erro ao fazer logout." }); // Retorna 500 se ocorreu erro a destruir a sessão.
-		}
-		res.clearCookie('connect.sid'); // Limpa o cookie de sessão no cliente.
-		res.status(200).json({ "Message": "Sucesso - Logout bem-sucedido." }); // Retorna sucesso.
-	});
+    req.session.destroy(err => { // Destroi a sessão ativa em questão.
+        if (err) { // Se houver algum erro
+            res.status(500).json({ "Message": "Erro ao fazer logout." }); // Retorna erro 500 (Internal Server Error)
+        }
+        res.clearCookie('connect.sid'); // Limpa o cookie.
+        res.status(200).json({ "Message": "Logout realizado com sucesso." }); // Retorna sucesso
+    });
 };
-module.exports.handleLogout = handleLogout; // Exporta a função de logout.
+module.exports.handleLogout = handleLogout;
 
 /**
- * Função que retorna os dados do utilizador para a dashboard.
+ * Retorno dos dados do utilizador para a dashboard.
  * @param {*} req
  * @param {*} res
  */
 const handleRead = (req, res) => {
-	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica existência e validade da sessão.
-		return res.status(401).json({ Message: "Não autorizado. Sessão inexistente ou inválida." }); // Retorna 401 se sessão inválida.
+	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica a existência e a validade da sessão.
+		res.status(401).json({ "Message": "Não autorizado. Sessão inexistente ou inválida." }); // Retorna erro 401 (Unauthorized Error) se sessão inválida
 	}
-	const uid = req.session.user.user_id; // Obtém o id do utilizador da sessão.
-	const connection = mysql.createConnection(options); // Cria conexão à BD para ler dados do utilizador.
-	connection.connect(); // Abre ligação.
+
+	const uid = req.session.user.user_id; // Id do utilizador
+    const connection = mysql.createConnection(options); // Cria conexão à base de dados para buscar os dados do utilizador com sessão iniciada
+    connection.connect(); // Abre conexão
 
 	connection.query(
-		mysql.format("SELECT user_name, user_email FROM user WHERE user_id = ?", [uid]), // Query preparada para obter nome e email pelo id.
-		(err, rows) => {
-			connection.end(); // Fecha a conexão quando recebe resposta.
+		mysql.format("SELECT user_name, user_email FROM user WHERE user_id = ?", [uid]), // Query SQL para obter os dados do utilizador com o id indicado na sessão
+        (err, rows) => { // Callback da query
+            connection.end(); // Fecha a conexão quando recebe resposta.
 			if (err) {
-				return res.status(500).json({ "Message": `Erro ao ler dados do utilizador: ${err.message}` }); // Retorna 500 em caso de erro na BD.
+				res.status(500).json({ "Message": `Erro ao ler dados do utilizador: ${err.message}` }); // Retorna erro 500 (Internal Server Error) em caso de erro na Base de Dados.
 			}
 			if (rows.length === 0) {
-				return res.status(404).json({ "Message": "Utilizador não encontrado." }); // Retorna 404 se o utilizador não existe.
+				res.status(404).json({ "Message": "Utilizador não encontrado." }); // Retorna erro 404 (Not Found Error) se o utilizador não existir.
 			}
-			const user = rows[0]; // Pega o registo do utilizador.
-			console.log("Dados do utilizador:", user); // Loga os dados do utilizador no servidor para debugging.
-			res.status(200).json({ "Message": "Sucesso", "user": user }); // Retorna os dados do utilizador.
+			res.status(200).json({ "Message": "Sucesso", "user": rows[0] }); // Retorna os dados do utilizador.
 		}
 	);
 };
-module.exports.handleRead = handleRead; // Exporta a função de leitura de dados.
+module.exports.handleRead = handleRead;
 
 /**
- * Função que atualiza os dados da conta de um utilizador via PUT.
+ * Atualiza os dados da conta de um utilizador (vindo do formulário da dashboard).
  * @param {*} req
  * @param {*} res
  */
 const handleUpdate = (req, res) => {
-	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica sessão válida.
-		return res.status(401).json({ Message: "Não autorizado. Sessão inexistente ou inválida." }); // Retorna 401 caso contrário.
+	if (!req.session || !req.session.user || !req.session.user.user_id) { // Verifica a existência e a validade da sessão.
+		res.status(401).json({ "Message": "Não autorizado. Sessão inexistente ou inválida." }); // Retorna erro 401 (Unauthorized Error) se sessão inválida.
 	}
 
-	const uid = req.session.user.user_id; // Id do utilizador da sessão.
-	const { name, email, newPassword } = req.body; // Extrai campos a atualizar do corpo do pedido.
+	const uid = req.session.user.user_id; // Id do utilizador
+	const { name, email, newPassword } = req.body; // Campos fornecidos para atualizar
 
 	if (!name && !email && !newPassword) { // Verifica se há pelo menos um campo para atualizar.
-		return res.status(400).json({ "Message": "Nenhum campo fornecido para atualizar." }); // Retorna 400 se nenhum campo foi fornecido.
+		res.status(400).json({ "Message": "Nenhum campo fornecido para atualizar." }); // Retorna erro 400 (Bad Request Error) se nenhum campo foi fornecido.
 	}
 
-	const connection = mysql.createConnection(options); // Cria conexão à BD para executar update.
-	connection.connect(); // Abre a ligação.
+	const connection = mysql.createConnection(options); // Cria conexão à base de dados para executar a atualização dos dados
+    connection.connect(); // Abre conexão
 
-	const updates = []; // Array para armazenar segmentos da cláusula SET.
-	const params = []; // Parâmetros correspondentes para query preparada.
+	const updates = []; // Segmentos da cláusula SET
+    const params = []; // Parâmetros para a query
 
-	if (name) {
-		updates.push("user_name = ?"); // Adiciona atualização do nome.
-		params.push(name); // Adiciona parâmetro do nome.
+	if (name) { // Se o nome for preenchido
+		updates.push("user_name = ?"); // Adiciona atualização do nome
+		params.push(name); // Adiciona parâmetro do nome
 	}
 
-	if (email) {
-		updates.push("user_email = ?"); // Adiciona atualização do email.
-		params.push(email); // Adiciona parâmetro do email.
+	if (email) { // Se o email for preenchido
+		updates.push("user_email = ?"); // Adiciona atualização do email
+		params.push(email); // Adiciona parâmetro do email
+	}
+
+	if (newPassword) { // Se houver password nova 
+		bcrypt.hash(newPassword, 10, (errHash, hash) => { // Gera hash assíncrono para a nova password
+			if (errHash) {
+				connection.end(); // Fecha conexão em caso de erro no hash
+				res.status(500).json({ "Message": "Erro ao gerar hash da password." }); // Retorna erro 500 (Internal Server Error) em caso de erro no hash
+			}
+			updates.push("user_password = ?"); // Adiciona atualização do campo password
+			params.push(hash); // Adiciona hash ao array de parâmetros
+			doUpdate(); // Executa a rotina de update já com o hash incluído
+		});
+	} else {
+		doUpdate(); // Executa o update se não há password para atualizar
 	}
 
 	const doUpdate = () => {
-		params.push(uid); // Adiciona o uid como último parâmetro para WHERE.
-		const sql = mysql.format("UPDATE user SET " + updates.join(", ") + " WHERE user_id = ?", params); // Prepara a query de UPDATE com os parâmetros.
-		connection.query(sql, (err, result) => { // Executa a query de atualização.
-			connection.end(); // Fecha a conexão após a execução.
+		params.push(uid); // Adiciona o uid como último parâmetro para WHERE
+		const sql = mysql.format("UPDATE user SET " + updates.join(", ") + " WHERE user_id = ?", params); // Query SQL com os parâmetros recebidos para atualizar os dados do utilizador na base de dados
+		connection.query(sql, (err, result) => { // Executa a query de atualização
+			connection.end(); // Fecha a conexão após a execução
 			if (err) {
 				if (err.code === 'ER_DUP_ENTRY') {
-					return res.status(409).json({ "Message": "Erro - Esse email já está em uso por outra conta." }); // Retorna 409 se email duplicado.
+					res.status(409).json({ "Message": "Erro - Credenciais já em uso por outra conta." }); // Retorna erro 409 (Conflict Error) se o nome ou email já for utilizado por outra conta.
 				}
-				return res.status(500).json({ "Message": `Erro ao atualizar conta: ${err.message}` }); // Retorna 500 em caso de erro genérico.
+				res.status(500).json({ "Message": `Erro ao atualizar conta: ${err.message}` }); // Retorna erro 500 (Internal Server Error) em caso de erro genérico.
 			}
-			if (req.session.user) { // Atualiza os dados na sessão caso existam alterações.
-				if (name) req.session.user.user_name = name; // Atualiza nome na sessão.
-				if (email) req.session.user.user_email = email; // Atualiza email na sessão.
+			if (req.session.user) { // Atualiza os dados na sessão caso existam alterações
+				if (name) req.session.user.user_name = name; // Atualiza nome na sessão
+				if (email) req.session.user.user_email = email; // Atualiza email na sessão
 			}
-			return res.status(200).json({ "Message": "Sucesso - Dados da conta atualizados." }); // Retorna sucesso.
+			res.status(200).json({ "Message": "Dados da conta atualizados com sucesso." }); // Retorna sucesso
 		});
 	};
-
-	if (newPassword) {
-		bcrypt.hash(newPassword, 10, (errHash, hash) => { // Gera hash assíncrono para a nova password.
-			if (errHash) {
-				connection.end(); // Fecha conexão em caso de erro no hash.
-				return res.status(500).json({ "Message": "Erro ao gerar hash da password." }); // Retorna 500 se falha no hash.
-			}
-			updates.push("user_password = ?"); // Adiciona atualização do campo password.
-			params.push(hash); // Adiciona hash ao array de parâmetros.
-			doUpdate(); // Executa a rotina de update já com o hash incluído.
-		});
-	} else {
-		doUpdate(); // Executa o update se não há password para atualizar.
-	}
 };
-module.exports.handleUpdate = handleUpdate; // Exporta a função de atualização.
+module.exports.handleUpdate = handleUpdate;
 
 /**
- * Função que elimina a conta do utilizador após confirmação e verificação da password.
+ * Eliminar a conta do utilizador (após confirmação e verificação da password).
  * @param {*} req
  * @param {*} res
  */
 const handleDelete = (req, res) => {
-	console.log('Delete request body:', req.body); // Log do body para debug de pedidos de delete.
-	const body = req.body || {}; // Garante um objecto body mesmo que não venha no pedido.
-	const confirmed = body.confirmDelete === true || body.confirmDelete === 'true' || body.confirmDelete === 1 || body.confirmDelete === '1'; // Normaliza diferentes formas de confirmação.
-	if (!confirmed) {
-		return res.status(400).json({ "Message": "Confirmação necessária – Tem a certeza de que deseja eliminar a conta?" }); // Retorna 400 se não há confirmação.
+	const body = req.body || {}; // Garante um objecto body mesmo que não venha no pedido
+	const confirmed = body.confirmDelete === true || body.confirmDelete === 'true' || body.confirmDelete === 1 || body.confirmDelete === '1'; // Normaliza formas de confirmação da operação
+	if (!confirmed) { // Se não houver confirmação
+		res.status(300).json({ "Message": "Confirmação necessária – Tem a certeza de que deseja eliminar a conta?" }); // Retorna 300 (Multiple Choices) se não há confirmação
 	}
-	const email = body.email; // Email fornecido para confirmar identidade.
-	const password = body.password; // Password fornecida para confirmar identidade.
-	if (!email || !password) {
-		return res.status(400).json({ "Message": "Email e password são obrigatórios para eliminar a conta." }); // Retorna 400 se faltar email ou password.
+	const email = body.email; // Email fornecido para confirmar identidade
+	if (!email) {
+		res.status(400).json({ "Message": "Email obrigatório para eliminar a conta." }); // Retorna erro 400 (Bad Request Error) se faltar email.
 	}
-	const connection = mysql.createConnection(options); // Cria conexão à BD para verificar e eliminar o utilizador.
-	connection.connect(); // Abre ligação.
+	const password = body.password; // Password fornecida para confirmar identidade
+	if (!password) {
+		res.status(400).json({ "Message": "Password obrigatória para eliminar a conta." }); // Retorna erro 400 (Bad Request Error) se faltar password.
+	}
+	const connection = mysql.createConnection(options); // Cria conexão à base de dados para verificar e eliminar o utilizador.
+	connection.connect(); // Abre conexão
 	connection.query(
 		mysql.format("SELECT user_id, user_password FROM user WHERE user_email = ?", [email]), // Query para obter id e hash da password pelo email.
-		(err, rows) => {
-			if (err) {
-				connection.end(); // Fecha conexão em caso de erro.
-				return res.status(500).json({ "Message": `Erro – MySQL query to delete: ${err.message}` }); // Retorna 500 com a mensagem de erro.
-			}
-			if (rows.length === 0) {
-				connection.end(); // Fecha conexão se não encontrou o utilizador.
-				return res.status(401).json({ "Message": "Erro – Dados inseridos incorretamente." }); // Retorna 401 se não encontrado.
-			}
+		(errA, rows) => {
+			if (errA) { // Se erro na query
+                res.status(500).json({ "Message": `Erro ao aceder à base de dados: ${errA.message}` }); // Retorna erro 500 (Internal Server Error)
+                connection.end(); // Fecha conexão
+            }
+            if (rows.length === 0) { // Se um utilizador não for encontrado
+                res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error) se dados não corresponderem
+                connection.end(); // Fecha conexão
+            }
 			const user = rows[0]; // Pega o utilizador encontrado.
-			const uid = user.user_id; // Extrai o id do utilizador.
 
 			bcrypt.compare(password, user.user_password, (errB, result) => { // Compara a password fornecida com o hash guardado.
 				if (errB) {
-					connection.end(); // Fecha conexão em caso de erro no bcrypt.
-					return res.status(500).json({ "Message": "Erro ao verificar a password." }); // Retorna 500 se houve erro a verificar password.
+					res.status(500).json({ "Message": "Erro ao verificar a password." }); // Retorna erro 500 (Internal Server Error) se houver erro a verificar password
+					connection.end(); // Fecha conexão
 				}
 				if (!result) {
-					connection.end(); // Fecha conexão se a password não corresponder.
-					return res.status(401).json({ "Message": "Dados inseridos incorretamente." }); // Retorna 401 se autenticação falhou.
+					res.status(401).json({ "Message": "Credenciais incorretas." }); // Retorna erro 401 (Unauthorized Error) se autenticação falhou.
+					connection.end(); // Fecha conexão
 				}
-
 				connection.query(
-					mysql.format("DELETE FROM user WHERE user_id = ?", [uid]), // Query para eliminar o utilizador pelo id.
+					mysql.format("DELETE FROM user WHERE user_id = ?", [uid]), // Query para eliminar o utilizador pelo id
 					(errUser, resultUser) => {
-						connection.end(); // Fecha conexão após tentativa de delete.
+						connection.end(); // Fecha conexão após tentativa de delete
 						if (errUser) {
-							return res.status(500).json({ "Message": `Erro ao eliminar conta: ${errUser.message}` }); // Retorna 500 se falha ao eliminar.
+							res.status(500).json({ "Message": `Erro ao eliminar conta: ${errUser.message}` }); // Retorna erro 500 (Internal Server Error) se falha ao eliminar
 						}
-						if (req.session) { // Se existe sessão, tenta destruí-la depois do delete.
+						if (req.session) { // Se existe sessão, tenta destruí-la depois do delete
 							req.session.destroy(errS => {
-								if (errS) {
-									res.clearCookie('connect.sid'); // Mesmo que não consiga destruir, limpa cookie no cliente.
-									return res.status(200).json({ "Message": "Sucesso – Conta eliminada. (sessão não destruída automaticamente)" }); // Informa que conta foi eliminada apesar do problema na sessão.
+								if (errS) { // Se houver erro a eliminar a sessão
+									res.clearCookie('connect.sid'); // Mesmo que não consiga destruir, limpa cookie no cliente
+									res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se havia sessão e não foi destruída)
 								}
-								res.clearCookie('connect.sid'); // Limpa cookie se sessão destruída com sucesso.
-								return res.status(200).json({ "Message": "Sucesso – Conta eliminada." }); // Retorna sucesso final.
+								res.clearCookie('connect.sid'); // Limpa cookie se sessão destruída com sucesso
+								res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se havia sessão e foi destruída)
 							});
 						} else {
-							return res.status(200).json({ "Message": "Sucesso – Conta eliminada." }); // Retorna sucesso se não havia sessão.
+							res.status(200).json({ "Message": "Conta eliminada com sucesso." }); // Retorna sucesso (se não havia sessão)
 						}
 					}
 				);
@@ -282,45 +277,44 @@ const handleDelete = (req, res) => {
 		}
 	);
 };
-module.exports.handleDelete = handleDelete; // Exporta a função de delete.
+module.exports.handleDelete = handleDelete;
 
 /**
- * Função que verifica se existe sessões ativas (através dos cookies de sessão).
+ * Verifica existência de sessões ativas (através do cookie de sessão).
  * @param {*} req
  * @param {*} res
  */
 const handleCheckSession = (req, res) => {
-	if (req.session && req.session.user) { // Verifica se existe sessão e user na sessão.
-		res.status(200).json({ sessionActive: true, user: req.session.user }); // Retorna 200 com dados da sessão.
+	if (req.session && req.session.user) { // Verifica se existe sessão e user na sessão
+		res.status(200).json({ sessionActive: true, user: req.session.user }); // Retorna sucesso (com dados da sessão).
 	} else {
-		res.status(401).json({ sessionActive: false, message: "Sessão inativa. É necessário login." }); // Retorna 401 se sem sessão.
+		res.status(401).json({ sessionActive: false, message: "Sessão inativa. É necessário login." }); // Retorna erro 401 (Unauthorized Error) se não houver sessão.
 	}
 };
-module.exports.handleCheckSession = handleCheckSession; // Exporta a função de verificação de sessão.
+module.exports.handleCheckSession = handleCheckSession;
 
 /**
- * Função que retorna a lista de animais da tabela "animal" (atualmente vazia)
+ * Retorna a lista de animais da tabela "animal"
  * @param {*} req
  * @param {*} res
  */
 const getAnimals = (req, res) => {
-	const category = req.query.category;
+	const category = req.query.category; // Retorna a categoria de animal pedida
 	let sql = "SELECT animal_id, animal_name, animal_population, animal_status, animal_status_class, animal_description, animal_image_url, animal_habitat, animal_category FROM animal";
 
     if (category) { // Se a categoria for fornecida, adiciona a cláusula WHERE
-        sql += mysql.format(" WHERE animal_category = ?", [category]); // Usamos mysql.format para sanitizar o input e evitar SQL Injection
+        sql += mysql.format(" WHERE animal_category = ?", [category]);
     }
-
-	runQuery(res, sql, "animal"); // Chama runQuery para obter animais.
+	runQuery(res, sql, "animal"); // Chama a função runQuery para obter os animais na base de dados.
 };
-module.exports.getAnimals = getAnimals; // Exporta função que obtém animais.
+module.exports.getAnimals = getAnimals;
 
 /**
- * (Função que retorna a lista de logs da tabela "logs" (atualmente vazia)
+ * (Função que retorna a lista de logs da tabela "logs" (vazia)
  * @param {*} req
  * @param {*} res
  */
 const getLogs = (req, res) => {
-	runQuery(res, "SELECT log_id, log_datetime, log_user_id FROM logs", "logs"); // Chama runQuery para obter logs.
+	runQuery(res, "SELECT log_id, log_datetime, log_user_id FROM logs", "logs"); // Chama a função runQuery para obter logs (não irá retornar nada pela tabela estar vazia).
 };
-module.exports.getLogs = getLogs; // Exporta função que obtém logs.
+module.exports.getLogs = getLogs;
