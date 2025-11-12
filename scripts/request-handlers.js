@@ -191,21 +191,6 @@ const handleUpdate = (req, res) => {
 		params.push(email); // Adiciona parâmetro do email
 	}
 
-	if (newPassword) { // Se houver password nova 
-		bcrypt.hash(newPassword, 10, (errHash, hash) => { // Gera hash assíncrono para a nova password
-			if (errHash) {
-				connection.end(); // Fecha conexão em caso de erro no hash
-				res.status(500).json({ "Message": "Erro ao gerar hash da password." }); // Retorna erro 500 (Internal Server Error) em caso de erro no hash
-				return;
-			}
-			updates.push("user_password = ?"); // Adiciona atualização do campo password
-			params.push(hash); // Adiciona hash ao array de parâmetros
-			doUpdate(); // Executa a rotina de update já com o hash incluído
-		});
-	} else {
-		doUpdate(); // Executa o update se não há password para atualizar
-	}
-
 	const doUpdate = () => {
 		params.push(uid); // Adiciona o uid como último parâmetro para WHERE
 		const sql = mysql.format("UPDATE user SET " + updates.join(", ") + " WHERE user_id = ?", params); // Query SQL com os parâmetros recebidos para atualizar os dados do utilizador na base de dados
@@ -227,6 +212,21 @@ const handleUpdate = (req, res) => {
 			return;
 		});
 	};
+
+	if (newPassword) { // Se houver password nova 
+		bcrypt.hash(newPassword, 10, (errHash, hash) => { // Gera hash assíncrono para a nova password
+			if (errHash) {
+				connection.end(); // Fecha conexão em caso de erro no hash
+				res.status(500).json({ "Message": "Erro ao gerar hash da password." }); // Retorna erro 500 (Internal Server Error) em caso de erro no hash
+				return;
+			}
+			updates.push("user_password = ?"); // Adiciona atualização do campo password
+			params.push(hash); // Adiciona hash ao array de parâmetros
+			doUpdate(); // Executa a rotina de update já com o hash incluído
+		});
+	} else {
+		doUpdate(); // Executa o update se não há password para atualizar
+	}
 };
 module.exports.handleUpdate = handleUpdate;
 

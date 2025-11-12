@@ -38,6 +38,10 @@ window.handleSignup = (event) => {
 			if (xhr.status === 200) { // Se o pedido foi bem-sucedido.
 				alert("Registo bem-sucedido."); // Informa o utilizador.
 				window.showToLogin(); // Redireciona para a página de login.
+				document.getElementById("signupName").value = ''; // Limpa campo nome quando sai da página.
+				document.getElementById("signupEmail").value = ''; // Limpa campo email quando sai da página.
+				document.getElementById("signupPassword").value = ''; // Limpa campo da password quando sai da página.
+				document.getElementById("signupConfirm").value = ''; // Limpa campo da confirmação da password quando sai da página.
 			} else { // Se não terminou com sucesso.
 				alert("Erro no registo: " + xhr.responseText); // Mostra erro retornado pelo servidor.
 			}
@@ -61,6 +65,8 @@ window.handleLogin = (event) => {
 			if (xhr.status === 200) { // Se o pedido foi bem-sucedido.
 				alert("Login bem-sucedido."); // Informa o utilizador.
 				window.showToMain(); // Redireciona para a página principal.
+				document.getElementById("loginEmail").value = ''; // Limpa campo email quando sai da página.
+                document.getElementById("loginPassword").value = ''; // Limpa campo da password quando sai da página.
 			} else if (xhr.status === 401) { // Se o pedido terminou num erro 401 (devido a credenciais incorretas).
 				alert("Dados inseridos incorretamente."); // Informa o utilizador para credenciais inválidas.
 			} else { // Se não terminou com sucesso.
