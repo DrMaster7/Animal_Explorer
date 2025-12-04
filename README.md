@@ -1,3 +1,3 @@
 # Animal-Explorer
 
-Animal Explorer - Projeto de PSW
+Animal Explorer - Projeto para a disciplina de PSW (Programação de Sistemas Web)
