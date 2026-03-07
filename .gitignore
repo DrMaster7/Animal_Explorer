@@ -1,0 +1,4 @@
+node_modules
+connectionOptions.json
+.vscode
+.env

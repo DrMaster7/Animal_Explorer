@@ -1,13 +1,15 @@
--- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+CREATE DATABASE  IF NOT EXISTS `animal_explorer` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `animal_explorer`;
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: localhost    Database: projetopsw
+-- Host: localhost    Database: animal_explorer
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	8.0.45-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -16,29 +18,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `logs`
+-- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `logs`;
+DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `logs` (
-  `logs_id` int NOT NULL AUTO_INCREMENT,
-  `logs_datetime` datetime NOT NULL,
-  `logs_user_id` int NOT NULL,
-  PRIMARY KEY (`logs_id`),
-  KEY `logs_ibfk_1` (`logs_user_id`),
-  CONSTRAINT `logs_ibfk_1` FOREIGN KEY (`logs_user_id`) REFERENCES `user` (`user_id`)
+CREATE TABLE `user` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(30) NOT NULL,
+  `user_email` varchar(45) NOT NULL,
+  `user_password` varchar(64) NOT NULL,
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `logs`
+-- Dumping data for table `user`
 --
 
-LOCK TABLES `logs` WRITE;
-/*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs` ENABLE KEYS */;
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-28 15:58:01
+-- Dump completed on 2026-03-07 13:52:42
